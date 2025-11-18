@@ -1,32 +1,32 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MusicPlaylistOrganizer.Models;
+using MusicPlaylistOrganizer.Repositories;
 
 namespace MusicPlaylistOrganizer.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IPlaylistRepository _playlistRepo;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IPlaylistRepository playlistRepo)
         {
-            _logger = logger;
+            _playlistRepo = playlistRepo;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var vm = new HomeIndexViewModel
+            {
+                ArtistCount = await _playlistRepo.GetArtistCountAsync(),
+                TrackCount = await _playlistRepo.GetTrackCountAsync(),
+                PlaylistCount = await _playlistRepo.GetPlaylistCountAsync()
+            };
+
+            return View(vm);
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        public IActionResult Privacy() => View();
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        public IActionResult Contact() => View();
     }
 }
