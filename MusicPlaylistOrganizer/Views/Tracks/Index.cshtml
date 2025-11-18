@@ -1,0 +1,10 @@
+﻿@model IEnumerable<MusicPlaylistOrganizer.Models.Track>
+
+<h1>Tracks</h1>
+
+<ul>
+    @foreach (var track in Model)
+    {
+        <li>@track.Title — @track.Artist?.Name</li>
+    }
+</ul>

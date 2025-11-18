@@ -1,8 +1,33 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model MusicPlaylistOrganizer.Models.HomeIndexViewModel
+
+@{
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h1>Music Playlist Organizer</h1>
+
+<p> simple functional landing page for Sprint 2.</p>
+
+<div style="display:flex; gap:20px; margin-top:20px;">
+    <div style="border:1px solid #ccc; padding:20px; border-radius:8px;">
+        <h2>Artists</h2>
+        <p>@Model.ArtistCount total</p>
+        <a href="/Artists">View Artists &raquo;</a>
+    </div>
+
+    <div style="border:1px solid #ccc; padding:20px; border-radius:8px;">
+        <h2>Tracks</h2>
+        <p>@Model.TrackCount total</p>
+        <a href="/Tracks">View Tracks &raquo;</a>
+    </div>
+
+    <div style="border:1px solid #ccc; padding:20px; border-radius:8px;">
+        <h2>Playlists</h2>
+        <p>@Model.PlaylistCount total</p>
+        <a href="/Playlists">View Playlists &raquo;</a>
+    </div>
 </div>
+
+<hr />
+
+<p>we will use this page to verify controllers + repos are working before UI styling.</p>
