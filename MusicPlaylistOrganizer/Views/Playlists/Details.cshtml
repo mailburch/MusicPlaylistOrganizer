@@ -1,0 +1,47 @@
+﻿@model MusicPlaylistOrganizer.Models.Playlist
+
+@{
+    ViewData["Title"] = "Playlist Details";
+}
+
+<h1>Playlist Details</h1>
+
+<div>
+    <h2>@Model.Name</h2>
+    <p>@Model.Description</p>
+</div>
+
+<hr />
+
+<h3>Tracks in this Playlist</h3>
+
+@if (Model.PlaylistTracks == null || !Model.PlaylistTracks.Any())
+{
+    <p>No tracks in this playlist yet.</p>
+}
+else
+{
+    <ul>
+        @foreach (var pt in Model.PlaylistTracks.OrderBy(pt => pt.Position))
+        {
+            <li style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                @* Artwork thumbnail, if available *@
+                @if (!string.IsNullOrEmpty(pt.Track?.ArtworkUrl))
+                {
+                    <img src="@pt.Track.ArtworkUrl"
+                         alt="Cover for @pt.Track.Title"
+                         style="width:75px; height:75px; object-fit:cover; border-radius:4px;" />
+                }
+
+                <span>
+                    @pt.Position. @pt.Track.Title (@pt.Track.Artist.Name)
+                </span>
+            </li>
+        }
+    </ul>
+}
+
+<div style="margin-top:15px;">
+    <a asp-action="Edit" asp-route-id="@Model.PlaylistID" class="btn btn-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

@@ -1,0 +1,55 @@
+﻿@model MusicPlaylistOrganizer.Models.Artist
+
+@{
+    ViewData["Title"] = "Delete Artist";
+}
+
+<h1>Delete Artist</h1>
+
+<div style="display:flex; gap:15px; align-items:flex-start; margin-bottom:20px;">
+    @if (!string.IsNullOrEmpty(Model.ArtworkUrl))
+    {
+        <img src="@Model.ArtworkUrl"
+             alt="Artwork for @Model.Name"
+             style="width:120px; height:120px; object-fit:cover; border-radius:8px;" />
+    }
+
+    <div>
+        <h2>@Model.Name</h2>
+
+        @if (!string.IsNullOrEmpty(Model.Country))
+        {
+            <p><strong>Country:</strong> @Model.Country</p>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.ApiSourceId))
+        {
+            <p><strong>API Source ID:</strong> @Model.ApiSourceId</p>
+        }
+
+        <p><strong>Tracks:</strong> @(Model.Tracks?.Count ?? 0)</p>
+    </div>
+</div>
+
+@if (Model.Tracks != null && Model.Tracks.Any())
+{
+    <p class="text-danger">
+        This artist cannot be deleted because they still have tracks in the system
+        (and possibly in playlists). Remove or reassign those tracks first.
+    </p>
+
+    <div style="margin-top:10px;">
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+}
+else
+{
+    <h3>Are you sure you want to delete this artist?</h3>
+
+    <form asp-action="Delete" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="ArtistID" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+}

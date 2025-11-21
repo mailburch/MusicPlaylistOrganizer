@@ -1,0 +1,59 @@
+﻿@model MusicPlaylistOrganizer.Models.Track
+
+@{
+    ViewData["Title"] = "Track Details";
+    var duration = TimeSpan.FromSeconds(Model.DurationSeconds);
+}
+
+<h1>Track Details</h1>
+
+<div style="display:flex; gap:15px; align-items:flex-start; margin-bottom:20px;">
+    @if (!string.IsNullOrEmpty(Model.ArtworkUrl))
+    {
+        <img src="@Model.ArtworkUrl"
+             alt="Artwork for @Model.Title"
+             style="width:150px; height:150px; object-fit:cover; border-radius:8px;" />
+    }
+
+    <div>
+        <h2>@Model.Title</h2>
+
+        <p>
+            <strong>Artist:</strong>
+            @(Model.Artist?.Name ?? "Unknown")
+        </p>
+
+        <p>
+            <strong>Duration:</strong>
+            @duration.Minutes:@duration.Seconds.ToString("D2")
+        </p>
+
+        @if (!string.IsNullOrEmpty(Model.ApiSourceId))
+        {
+            <p><strong>API Source ID:</strong> @Model.ApiSourceId</p>
+        }
+    </div>
+</div>
+
+<hr />
+
+<h3>Playlists containing this track</h3>
+
+@if (Model.PlaylistTracks == null || !Model.PlaylistTracks.Any())
+{
+    <p>This track is not currently in any playlists.</p>
+}
+else
+{
+    <ul>
+        @foreach (var pt in Model.PlaylistTracks)
+        {
+            <li>@pt.Playlist.Name (Position @pt.Position)</li>
+        }
+    </ul>
+}
+
+<div style="margin-top:15px;">
+    <a asp-action="Edit" asp-route-id="@Model.TrackID" class="btn btn-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

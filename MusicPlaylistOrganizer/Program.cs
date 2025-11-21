@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using MusicPlaylistOrganizer.Data;
 using MusicPlaylistOrganizer.Repositories;
+using MusicPlaylistOrganizer.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,7 @@ builder.Services.AddDbContext<MusicContext>(options =>
 builder.Services.AddScoped<IArtistRepository, EfArtistRepository>();
 builder.Services.AddScoped<ITrackRepository, EfTrackRepository>();
 builder.Services.AddScoped<IPlaylistRepository, EfPlaylistRepository>();
+builder.Services.AddHttpClient<IMusicCatalogService, ItunesMusicCatalogService>();
 
 var app = builder.Build();
 

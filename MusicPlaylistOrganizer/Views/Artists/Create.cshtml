@@ -1,0 +1,129 @@
+﻿@model MusicPlaylistOrganizer.Models.Artist
+
+@{
+    ViewData["Title"] = "Create Artist";
+}
+
+<h1>Create Artist</h1>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="margin-top:10px;">
+        <label asp-for="Country"></label>
+        <input asp-for="Country" class="form-control" />
+        <span asp-validation-for="Country" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="margin-top:10px;">
+        <label asp-for="ArtworkUrl">Artwork URL</label>
+        <input asp-for="ArtworkUrl" class="form-control" />
+        <span asp-validation-for="ArtworkUrl" class="text-danger"></span>
+    </div>
+
+    <input asp-for="ApiSourceId" type="hidden" />
+
+    <div style="margin-top:15px;">
+        <button type="submit" class="btn btn-primary">Create</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+<hr />
+
+<h2>Search Artist from Online Catalog</h2>
+
+<p>You can search the external catalog and auto-fill this form.</p>
+
+<div>
+    <input type="text" id="artistQuery" placeholder="Search for an artist..." />
+    <button type="button" id="artistSearchBtn">Search</button>
+</div>
+
+<div id="artistSearchResults" style="margin-top:15px;"></div>
+
+@section Scripts {
+    <script>
+        document.getElementById('artistSearchBtn').addEventListener('click', function () {
+            const query = document.getElementById('artistQuery').value;
+            if (!query) return;
+
+            fetch('/Catalog/SearchArtists?query=' + encodeURIComponent(query))
+                .then(r => r.json())
+                .then(data => {
+                    const container = document.getElementById('artistSearchResults');
+                    container.innerHTML = '';
+
+                    if (!data || data.length === 0) {
+                        container.innerHTML = '<p>No results.</p>';
+                        return;
+                    }
+
+                    const list = document.createElement('ul');
+                    list.style.listStyle = "none";
+                    list.style.padding = "0";
+
+                    data.forEach(item => {
+                        const li = document.createElement('li');
+                        li.style.display = "flex";
+                        li.style.alignItems = "center";
+                        li.style.gap = "10px";
+                        li.style.marginBottom = "10px";
+
+                        if (item.artworkUrl100) {
+                            const img = document.createElement('img');
+                            img.src = item.artworkUrl100;
+                            img.alt = item.artistName;
+                            img.style.width = "60px";
+                            img.style.height = "60px";
+                            img.style.objectFit = "cover";
+                            img.style.borderRadius = "4px";
+                            li.appendChild(img);
+                        }
+
+                        const text = document.createElement('span');
+                        let label = item.artistName;
+                        if (item.primaryGenreName) {
+                            label += " (" + item.primaryGenreName + ")";
+                        }
+                        text.textContent = label;
+
+                        const btn = document.createElement('button');
+                        btn.textContent = "Use this artist";
+                        btn.style.marginLeft = "auto";
+                        btn.addEventListener('click', function () {
+                            const nameInput = document.getElementById('Name');
+                            const countryInput = document.getElementById('Country');
+                            const artworkInput = document.getElementById('ArtworkUrl');
+                            const apiSourceInput = document.getElementById('ApiSourceId');
+
+                            if (nameInput) nameInput.value = item.artistName || "";
+                            if (countryInput && item.primaryGenreName) {
+                                countryInput.value = item.primaryGenreName;
+                            }
+                            if (artworkInput && item.artworkUrl100) {
+                                artworkInput.value = item.artworkUrl100;
+                            }
+                            if (apiSourceInput && item.artistId) {
+                                apiSourceInput.value = item.artistId.toString();
+                            }
+                        });
+
+                        li.appendChild(text);
+                        li.appendChild(btn);
+                        list.appendChild(li);
+                    });
+
+                    container.appendChild(list);
+                });
+        });
+    </script>
+}
