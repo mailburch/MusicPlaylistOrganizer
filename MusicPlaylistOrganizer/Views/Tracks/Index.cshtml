@@ -6,8 +6,9 @@
     int? currentArtist = ViewData["CurrentArtistFilter"] as int?;
     var artistOptions  = ViewBag.ArtistOptions as List<MusicPlaylistOrganizer.Models.Artist> ?? new();
 }
-
+<div>
 <h1>Tracks</h1>
+
 
 <form asp-action="Index" method="get" class="form-inline" style="margin-bottom:15px;">
     <input type="text"
@@ -28,10 +29,10 @@
         }
     </select>
 
-    <button type="submit" class="btn btn-outline-primary" style="margin-left:8px;">Apply</button>
-    <a asp-action="Index" class="btn btn-link">Clear</a>
+    <button type="submit" class="btn btn-blue ms-3">Apply</button>
+    <a asp-action="Index" class="btn btn-mute ms-3">Clear</a>
 </form>
-<h5>Your Tracks</h5>
+<h5 style="margin-left: .5%;">Your Tracks</h5>
 <p>
     <a asp-action="Create" class="btn btn-blue">+ Add a Track</a>
 </p>
@@ -39,33 +40,32 @@
 <table class="table-mpo">
     <thead>
         <tr>
-            <th>Artwork</th>
             <th>
                 <a asp-action="Index"
                    asp-route-sortOrder="@ViewData["TitleSortParm"]"
                    asp-route-searchString="@currentSearch"
-                   asp-route-artistFilter="@currentArtist">
-                    Title
+                   asp-route-artistFilter="@currentArtist" class="text-link-mute" style="text-decoration: none;">
+                    TRACK
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sortOrder="@ViewData["ArtistSortParm"]"
                    asp-route-searchString="@currentSearch"
-                   asp-route-artistFilter="@currentArtist">
-                    Artist
+                   asp-route-artistFilter="@currentArtist" class="text-link-mute" style="text-decoration: none;">
+                    ARTIST
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sortOrder="@ViewData["DurationSortParm"]"
                    asp-route-searchString="@currentSearch"
-                   asp-route-artistFilter="@currentArtist">
-                    Duration
+                   asp-route-artistFilter="@currentArtist" class="text-link-mute" style="text-decoration: none;">
+                    DURATION
                 </a>
             </th>
             <th>In Playlists</th>
-            <th></th>
+            <th class="text-mute">ACTIONS</th>
         </tr>
     </thead>
     <tbody>
@@ -73,30 +73,39 @@
     {
         var duration = TimeSpan.FromSeconds(track.DurationSeconds);
         <tr>
-            <td>
-                @if (!string.IsNullOrEmpty(track.ArtworkUrl))
-                {
-                    <img src="@track.ArtworkUrl"
-                         alt="Artwork for @track.Title"
-                        style="width:75px; height:75px; object-fit:cover; border-radius:4px;" />
-                    }
-                    else
-                    {
-                        <img src="~/Images/MPO_Logo.png"
-                             alt="Artwork for @track.Title"
-                             style="width:75px; height:75px; object-fit:cover; border-radius:4px;" />
-                    }
-            </td>
-            <td>@track.Title</td>
-            <td>@(track.Artist?.Name ?? "Unknown")</td>
-            <td>@duration.Minutes:@duration.Seconds.ToString("D2")</td>
+        <td style="padding-right: 1%;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+        
+                @{
+                    var artworkUrl = string.IsNullOrEmpty(track.ArtworkUrl) ? "/Images/MPO_Logo.png" : track.ArtworkUrl;
+                    var artworkStyle = "width:50px; height:50px; object-fit:cover; border-radius:10px; margin: 2% 0;";
+                }
+                <img src="@artworkUrl"
+                     alt="Artwork for @track.Title"
+                     style="@artworkStyle" />
+        
+                <div style="display: flex; flex-direction: column; justify-content: center;">
+                    <div style="line-height: 1.2;">
+                        <strong>@track.Title</strong>
+                    </div>
+            
+                    <div class="text-mute" style="line-height: 1.2;">
+                        @(track.Artist?.Name ?? "Unknown")
+                    </div>
+                </div>
+        
+            </div>
+        </td>
+                <td class="text-mute">@(track.Artist?.Name ?? "Unknown")</td>
+                <td class="text-mute">@duration.Minutes:@duration.Seconds.ToString("D2")</td>
             <td>@(track.PlaylistTracks?.Count ?? 0)</td>
             <td>
-                <a asp-action="Details" class="btn btn-other me-md-2" asp-route-id="@track.TrackID">Details</a>
-                    <a asp-action="Edit" class="btn btn-other me-md-2" asp-route-id="@track.TrackID">Edit</a>
-                <a asp-action="Delete" class="btn btn-delete" asp-route-id="@track.TrackID">Delete</a>
+                <a asp-action="Details" class="btn btn-other m-1 ms-0" asp-route-id="@track.TrackID">Details</a>
+                <a asp-action="Edit" class="btn btn-other m-1 ms-0" asp-route-id="@track.TrackID">Edit</a>
+                <a asp-action="Delete" class="btn btn-delete m-1 ms-0" asp-route-id="@track.TrackID">Delete</a>
             </td>
         </tr>
     }
     </tbody>
 </table>
+</div>
