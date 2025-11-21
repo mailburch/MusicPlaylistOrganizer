@@ -4,173 +4,186 @@
     ViewData["Title"] = "Create Track";
 }
 
-<h1>Create Track</h1>
+<h1>Add Track</h1>
 
-<form asp-action="Create" method="post">
-    @Html.AntiForgeryToken()
+<div class="container-md bg-blue p-4" style="border-radius: 10px;">
+    <div class="row">
+        <h2>Add Track from Online Catalog</h2>
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="col-md-5">
 
-    <div class="form-group">
-        <label asp-for="Title"></label>
-        <input asp-for="Title" class="form-control" />
-        <span asp-validation-for="Title" class="text-danger"></span>
-    </div>
+            <div class="text-mute bg-blue" style="border-radius: 1rem; height: 100%;">
 
-    <div class="form-group" style="margin-top:10px;">
-        <label asp-for="ArtistID">Artist</label>
-        <select asp-for="ArtistID" class="form-control"
-                asp-items="ViewBag.ArtistID"></select>
-        <span asp-validation-for="ArtistID" class="text-danger"></span>
-    </div>
+                <div style="margin-bottom:10px;">
+                    <p>
+                        Use this to search the iTunes catalog and import a track directly
+                        into your library. It will also create/reuse the correct artist(s),
+                        split multi-artist names (like "Me & You"), and apply artwork.
+                    </p>
 
-    <div class="form-group" style="margin-top:10px;">
-        <label asp-for="DurationSeconds">Duration (seconds)</label>
-        <input asp-for="DurationSeconds" class="form-control" />
-        <span asp-validation-for="DurationSeconds" class="text-danger"></span>
-    </div>
+                    <input type="text" id="catalogQuery" placeholder="Search for a song..." class="form-control formField" style="max-width:400px; display:inline-block;" />
+                    <button type="button" id="catalogSearchBtn" class="btn btn-other mt-2">
+                        Search
+                    </button>
+                </div>
 
-    <div class="form-group" style="margin-top:10px;">
-        <label asp-for="ArtworkUrl">Artwork URL</label>
-        <input asp-for="ArtworkUrl" class="form-control" />
-        <span asp-validation-for="ArtworkUrl" class="text-danger"></span>
-    </div>
+                <div id="catalogResults"></div>
 
-    <div class="form-group" style="margin-top:10px;">
-        <label asp-for="ApiSourceId">API Source ID (optional)</label>
-        <input asp-for="ApiSourceId" class="form-control" />
-        <span asp-validation-for="ApiSourceId" class="text-danger"></span>
-    </div>
+                @section Scripts {
+                    <partial name="_ValidationScriptsPartial" />
 
-    <div style="margin-top:15px;">
-        <button type="submit" class="btn btn-primary">Create</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-    </div>
-</form>
+                    <script>
+                        document.getElementById('catalogSearchBtn').addEventListener('click', function () {
+                            const query = document.getElementById('catalogQuery').value;
+                            if (!query) return;
 
-<hr />
+                            fetch('/Catalog/SearchTracks?query=' + encodeURIComponent(query))
+                                .then(r => r.json())
+                                .then(data => {
+                                    const container = document.getElementById('catalogResults');
+                                    container.innerHTML = '';
 
-<h2>Add Track from Online Catalog</h2>
+                                    if (!data || data.length === 0) {
+                                        container.innerHTML = '<p>No results.</p>';
+                                        return;
+                                    }
 
-<p>
-    Use this to search the iTunes catalog and import a track directly
-    into your library. It will also create/reuse the correct artist(s),
-    split multi-artist names (like "Me & You"), and apply artwork.
-</p>
+                                    const list = document.createElement('ul');
+                                    list.style.listStyle = "none";
+                                    list.style.padding = "0";
 
-<div style="margin-bottom:10px;">
-    <input type="text" id="catalogQuery" placeholder="Search for a song..." class="form-control" style="max-width:400px; display:inline-block;" />
-    <button type="button" id="catalogSearchBtn" class="btn btn-outline-primary" style="margin-left:8px;">
-        Search
-    </button>
-</div>
+                                    data.forEach(item => {
+                                        const li = document.createElement('li');
+                                        li.style.backgroundColor = "#23274a";
+                                        li.style.padding = "2%";
+                                        li.style.borderRadius = "10px"
+                                        li.style.display = "flex";
+                                        li.style.alignItems = "center";
+                                        li.style.gap = "10px";
+                                        li.style.marginBottom = "10px";
 
-<div id="catalogResults"></div>
+                                        // Artwork thumbnail
+                                        const img = document.createElement('img');
+                                        img.src = item.artworkUrl100;
+                                        img.alt = item.trackName;
+                                        img.style.width = "50px";
+                                        img.style.height = "50px";
+                                        img.style.objectFit = "cover";
+                                        img.style.borderRadius = "4px";
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+                                        // Text
+                                        const text = document.createElement('span');
+                                        text.textContent = item.trackName + " — " + item.artistName;
 
-    <script>
-        document.getElementById('catalogSearchBtn').addEventListener('click', function () {
-            const query = document.getElementById('catalogQuery').value;
-            if (!query) return;
+                                        // Add/import button
+                                        const btn = document.createElement('button');
+                                        btn.textContent = "Select";
+                                        btn.className = "btn btn-sm btn-secondary";
+                                        btn.style.marginLeft = "auto";
+                                        btn.addEventListener('click', function () {
+                                            importTrackToLibrary(item);
+                                        });
 
-            fetch('/Catalog/SearchTracks?query=' + encodeURIComponent(query))
-                .then(r => r.json())
-                .then(data => {
-                    const container = document.getElementById('catalogResults');
-                    container.innerHTML = '';
+                                        li.appendChild(img);
+                                        li.appendChild(text);
+                                        li.appendChild(btn);
+                                        list.appendChild(li);
+                                    });
 
-                    if (!data || data.length === 0) {
-                        container.innerHTML = '<p>No results.</p>';
-                        return;
-                    }
-
-                    const list = document.createElement('ul');
-                    list.style.listStyle = "none";
-                    list.style.padding = "0";
-
-                    data.forEach(item => {
-                        const li = document.createElement('li');
-                        li.style.display = "flex";
-                        li.style.alignItems = "center";
-                        li.style.gap = "10px";
-                        li.style.marginBottom = "10px";
-
-                        // Artwork thumbnail
-                        const img = document.createElement('img');
-                        img.src = item.artworkUrl100;
-                        img.alt = item.trackName;
-                        img.style.width = "60px";
-                        img.style.height = "60px";
-                        img.style.objectFit = "cover";
-                        img.style.borderRadius = "4px";
-
-                        // Text
-                        const text = document.createElement('span');
-                        text.textContent = item.trackName + " — " + item.artistName;
-
-                        // Add/import button
-                        const btn = document.createElement('button');
-                        btn.textContent = "Import into library";
-                        btn.className = "btn btn-sm btn-success";
-                        btn.style.marginLeft = "auto";
-                        btn.addEventListener('click', function () {
-                            importTrackToLibrary(item);
+                                    container.appendChild(list);
+                                });
                         });
 
-                        li.appendChild(img);
-                        li.appendChild(text);
-                        li.appendChild(btn);
-                        list.appendChild(li);
-                    });
+                        // Import track via API → server handles:
+                        // - splitting "Me & You"
+                        // - reusing artists
+                        // - avoiding duplicate tracks by ApiSourceId
+                        // - not adding to any playlist here (playlistId = null)
+                        function importTrackToLibrary(item) {
+                            const payload = {
+                                trackApiId: item.trackId.toString(),
+                                artistApiId: item.artistId.toString(),
+                                trackName: item.trackName,
+                                artistName: item.artistName,
+                                durationMillis: item.trackTimeMillis,
+                                artworkUrl: item.artworkUrl100,
+                                playlistId: null
+                            };
 
-                    container.appendChild(list);
-                });
-        });
+                            fetch('/Catalog/ImportTrack', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'RequestVerificationToken': getAntiForgeryToken()
+                                },
+                                body: JSON.stringify(payload)
+                            })
+                            .then(r => r.json())
+                            .then(result => {
+                                if (result.success) {
+                                    // After importing, go straight to Edit page for that track
+                                    window.location.href = '/Tracks/Edit/' + result.trackId;
+                                } else {
+                                    alert('Failed to import track.');
+                                }
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                alert('Error importing track.');
+                            });
+                        }
 
-        // Import track via API → server handles:
-        // - splitting "Me & You"
-        // - reusing artists
-        // - avoiding duplicate tracks by ApiSourceId
-        // - not adding to any playlist here (playlistId = null)
-        function importTrackToLibrary(item) {
-            const payload = {
-                trackApiId: item.trackId.toString(),
-                artistApiId: item.artistId.toString(),
-                trackName: item.trackName,
-                artistName: item.artistName,
-                durationMillis: item.trackTimeMillis,
-                artworkUrl: item.artworkUrl100,
-                playlistId: null
-            };
-
-            fetch('/Catalog/ImportTrack', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': getAntiForgeryToken()
-                },
-                body: JSON.stringify(payload)
-            })
-            .then(r => r.json())
-            .then(result => {
-                if (result.success) {
-                    // After importing, go straight to Edit page for that track
-                    window.location.href = '/Tracks/Edit/' + result.trackId;
-                } else {
-                    alert('Failed to import track.');
+                        function getAntiForgeryToken() {
+                            const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                            return tokenInput ? tokenInput.value : '';
+                        }
+                    </script>
                 }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Error importing track.');
-            });
-        }
+            </div>
+        </div>
 
-        function getAntiForgeryToken() {
-            const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
-            return tokenInput ? tokenInput.value : '';
-        }
-    </script>
-}
+        <div class="col-md-7 text-mute">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Title"></label>
+                    <input asp-for="Title" class="form-control formField" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-group" style="margin-top:10px;">
+                    <label asp-for="ArtistID">Artist</label>
+                    <select asp-for="ArtistID" class="form-control formField"
+                            asp-items="ViewBag.ArtistID"></select>
+                    <span asp-validation-for="ArtistID" class="text-danger"></span>
+                </div>
+
+                <div class="form-group" style="margin-top:10px;">
+                    <label asp-for="DurationSeconds">Duration (seconds)</label>
+                    <input asp-for="DurationSeconds" class="form-control formField" />
+                    <span asp-validation-for="DurationSeconds" class="text-danger"></span>
+                </div>
+
+                <div class="form-group" style="margin-top:10px;">
+                    <label asp-for="ArtworkUrl">Artwork URL</label>
+                    <input asp-for="ArtworkUrl" class="form-control formField" />
+                    <span asp-validation-for="ArtworkUrl" class="text-danger"></span>
+                </div>
+
+                <div class="form-group" style="margin-top:10px;">
+                    <label asp-for="ApiSourceId">API Source ID (optional)</label>
+                    <input asp-for="ApiSourceId" class="form-control formField" />
+                    <span asp-validation-for="ApiSourceId" class="text-danger"></span>
+                </div>
+
+                <div style="margin-top:15px;">
+                    <button type="submit" class="btn btn-blue me-4">Save Track</button>
+                    <a asp-action="Index" class="btn btn-mute">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
