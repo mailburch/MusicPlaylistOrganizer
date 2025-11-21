@@ -31,12 +31,12 @@
     <button type="submit" class="btn btn-outline-primary" style="margin-left:8px;">Apply</button>
     <a asp-action="Index" class="btn btn-link">Clear</a>
 </form>
-
+<h5>Your Tracks</h5>
 <p>
-    <a asp-action="Create" class="btn btn-primary">Create New Track</a>
+    <a asp-action="Create" class="btn btn-blue">+ Add a Track</a>
 </p>
 
-<table class="table">
+<table class="table-mpo">
     <thead>
         <tr>
             <th>Artwork</th>
@@ -78,17 +78,23 @@
                 {
                     <img src="@track.ArtworkUrl"
                          alt="Artwork for @track.Title"
-                         style="width:75px; height:75px; object-fit:cover; border-radius:4px;" />
-                }
+                        style="width:75px; height:75px; object-fit:cover; border-radius:4px;" />
+                    }
+                    else
+                    {
+                        <img src="~/Images/MPO_Logo.png"
+                             alt="Artwork for @track.Title"
+                             style="width:75px; height:75px; object-fit:cover; border-radius:4px;" />
+                    }
             </td>
             <td>@track.Title</td>
             <td>@(track.Artist?.Name ?? "Unknown")</td>
             <td>@duration.Minutes:@duration.Seconds.ToString("D2")</td>
             <td>@(track.PlaylistTracks?.Count ?? 0)</td>
             <td>
-                <a asp-action="Details" asp-route-id="@track.TrackID">Details</a> |
-                <a asp-action="Edit" asp-route-id="@track.TrackID">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@track.TrackID">Delete</a>
+                <a asp-action="Details" class="btn btn-other me-md-2" asp-route-id="@track.TrackID">Details</a>
+                    <a asp-action="Edit" class="btn btn-other me-md-2" asp-route-id="@track.TrackID">Edit</a>
+                <a asp-action="Delete" class="btn btn-delete" asp-route-id="@track.TrackID">Delete</a>
             </td>
         </tr>
     }

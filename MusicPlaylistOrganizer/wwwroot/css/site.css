@@ -18,7 +18,8 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    color: #d0d1d9;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -29,3 +30,87 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+.bg-drk-blue {
+    background-color: #050712;
+}
+.bg-blue {
+    background-color: #15182b;
+}
+.btn-blue {
+    color: #d0d1d9;
+    background-color: #2a2df8;
+    border-radius: 20px;
+    padding: .5% 3%;
+    border-color: #2a2df8;
+    border-width: 3px;
+}
+.btn-blue:hover {
+    color: #d0d1d9;
+    background-color: darkblue;
+    border-color: #2a2df8;
+    border-width: 3px;
+}
+
+.btn-delete {
+    background-color: #3a1b2b;
+    color: #d0425e;
+    padding: 2% 5%;
+}
+
+.btn-delete:hover {
+    background-color: #d0425e;
+    color: #3a1b2b;
+}
+
+.btn-other {
+    color: #d0d1d9;
+    background-color: #23274a;
+    padding: 2% 5%;
+}
+
+.btn-other:hover {
+    color: #d0d1d9;
+    border-color: #23274a;
+    background-color: #2a2df8;
+}
+
+.table-mpo {
+    background-color: #15182b; /* Default background is transparent */
+    --bs-table-color: var(--bs-body-color); /* Inherits body text color */
+    --bs-border-color: #dee2e6; /* Standard light gray border color */
+    --bs-table-border-color: var(--bs-border-color);
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #d0d1d9;
+    vertical-align: top; /* Aligns content to the top of the cell */
+    caption-side: bottom;
+    border-collapse: collapse; /* Collapses borders into a single line */
+}
+
+    /* ----------------------------------------------------- */
+    /* Styling for Table Cells (<th> and <td>) */
+    /* ----------------------------------------------------- */
+
+    .table-mpo > :not(caption) > * > * {
+
+        padding: 0.5rem 0.5rem; /* Standard spacing inside cells */
+        background-color: var(--bs-table-bg); /* Uses the transparent background variable */
+        box-shadow: inset 0 0 0 9999px var(--bs-table-bg); /* A trick for proper background color inheritance/overlay */
+        border-bottom-width: 1px;
+    }
+
+    /* ----------------------------------------------------- */
+    /* Adding the Horizontal Row Dividers */
+    /* ----------------------------------------------------- */
+
+    .table-mpo > :not(caption) > * {
+        /* This rule applies a border to the top of the rows, visible between the padding and content */
+        border-color: var(--bs-table-border-color);
+        border-style: solid;
+        border-width: 1px 0 0 0; /* Only top border */
+    }
+
+    /* This is a slight adjustment to remove the top border from the very first row */
+    .table-mpo > :not(caption) > :first-child {
+        border-top-width: 0;
+    }
