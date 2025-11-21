@@ -5,33 +5,61 @@
     var currentSearch  = ViewData["CurrentFilter"] as string;
     int? currentArtist = ViewData["CurrentArtistFilter"] as int?;
     var artistOptions  = ViewBag.ArtistOptions as List<MusicPlaylistOrganizer.Models.Artist> ?? new();
+
 }
-<div>
 <h1>Tracks</h1>
+<div class="container-md">
+<div class="row">
+<div class="col-md-3">
 
+<div class="bg-blue p-4" style="border-radius: 1rem; height: 100%;">
+<p>Filters</p>
+            <form asp-action="Index" method="get" class="form-inline" style="margin-bottom:15px;">
+                <input type="text"
+                       name="searchString"
+                       value="@currentSearch"
+                       class="form-control"
+                       placeholder="Search by title or artist..."
+                       style="max-width:260px; display:inline-block;" />
 
-<form asp-action="Index" method="get" class="form-inline" style="margin-bottom:15px;">
-    <input type="text"
-           name="searchString"
-           value="@currentSearch"
-           class="form-control"
-           placeholder="Search by title or artist..."
-           style="max-width:260px; display:inline-block;" />
+                <select name="artistFilter" class="form-control" style="max-width:220px; display:inline-block; margin-top:3%;">
+                    <option value="">All Artists</option>
+                    @foreach (var a in artistOptions)
+                    {
+                        <option value="@a.ArtistID" selected="@(currentArtist == a.ArtistID)">
+                            @a.Name
+                        </option>
+                    }
+                    }
+                </select>
 
-    <select name="artistFilter" class="form-control" style="max-width:220px; display:inline-block; margin-left:8px;">
-        <option value="">All Artists</option>
-            @foreach (var a in artistOptions)
-            {
-                <option value="@a.ArtistID" selected="@(currentArtist == a.ArtistID)">
-                    @a.Name
-                </option>
-            }
-        }
-    </select>
+                <button type="submit" class="btn btn-blue mt-2 ps-3 pe-3 p-1">Apply</button>
+                <a asp-action="Index" class="btn btn-mute mt-2 ps-3 pe-3 p-1">Clear</a>
+            </form>
+            <p>Sort by</p>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["TitleSortParm"]"
+                   asp-route-searchString="@currentSearch"
+                   asp-route-artistFilter="@currentArtist" class="btn btn-mute mt-2" style="width: 100%;">
+                    TRACK
+                </a>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["ArtistSortParm"]"
+                   asp-route-searchString="@currentSearch"
+                   asp-route-artistFilter="@currentArtist" class="btn btn-mute mt-2" style="width: 100%;">
+                    ARTIST
+                </a>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["DurationSortParm"]"
+                   asp-route-searchString="@currentSearch"
+                   asp-route-artistFilter="@currentArtist" class="btn btn-mute mt-2" style="width: 100%;">
+                    DURATION
+                </a>
+            </div>
 
-    <button type="submit" class="btn btn-blue ms-3">Apply</button>
-    <a asp-action="Index" class="btn btn-mute ms-3">Clear</a>
-</form>
+</div>
+<div class="col-md-9">
+
 <h5 style="margin-left: .5%;">Your Tracks</h5>
 <p>
     <a asp-action="Create" class="btn btn-blue">+ Add a Track</a>
@@ -50,21 +78,12 @@
             </th>
             <th>
                 <a asp-action="Index"
-                   asp-route-sortOrder="@ViewData["ArtistSortParm"]"
-                   asp-route-searchString="@currentSearch"
-                   asp-route-artistFilter="@currentArtist" class="text-link-mute" style="text-decoration: none;">
-                    ARTIST
-                </a>
-            </th>
-            <th>
-                <a asp-action="Index"
                    asp-route-sortOrder="@ViewData["DurationSortParm"]"
                    asp-route-searchString="@currentSearch"
                    asp-route-artistFilter="@currentArtist" class="text-link-mute" style="text-decoration: none;">
                     DURATION
                 </a>
             </th>
-            <th>In Playlists</th>
             <th class="text-mute">ACTIONS</th>
         </tr>
     </thead>
@@ -72,7 +91,7 @@
     @foreach (var track in Model)
     {
         var duration = TimeSpan.FromSeconds(track.DurationSeconds);
-        <tr>
+        <tr class="track-row">
         <td style="padding-right: 1%;">
             <div style="display: flex; align-items: center; gap: 10px;">
         
@@ -96,9 +115,7 @@
         
             </div>
         </td>
-                <td class="text-mute">@(track.Artist?.Name ?? "Unknown")</td>
                 <td class="text-mute">@duration.Minutes:@duration.Seconds.ToString("D2")</td>
-            <td>@(track.PlaylistTracks?.Count ?? 0)</td>
             <td>
                 <a asp-action="Details" class="btn btn-other m-1 ms-0" asp-route-id="@track.TrackID">Details</a>
                 <a asp-action="Edit" class="btn btn-other m-1 ms-0" asp-route-id="@track.TrackID">Edit</a>
@@ -108,4 +125,6 @@
     }
     </tbody>
 </table>
+</div>
+</div>
 </div>
