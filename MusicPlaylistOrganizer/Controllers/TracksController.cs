@@ -11,7 +11,10 @@ namespace MusicPlaylistOrganizer.Controllers
         private readonly IArtistRepository _artistRepo;
         private readonly IPlaylistRepository _playlistRepo;
 
-        public TracksController(ITrackRepository trackRepo, IArtistRepository artistRepo, IPlaylistRepository playlistRepo)
+        public TracksController(
+            ITrackRepository trackRepo,
+            IArtistRepository artistRepo,
+            IPlaylistRepository playlistRepo)
         {
             _trackRepo = trackRepo;
             _artistRepo = artistRepo;
@@ -30,7 +33,7 @@ namespace MusicPlaylistOrganizer.Controllers
 
             var tracks = await _trackRepo.GetAllAsync(); // includes Artist + PlaylistTracks
 
-            // 🔍 SEARCH: title or artist name
+            // search by title or artist
             if (!string.IsNullOrWhiteSpace(searchString))
             {
                 var term = searchString.ToLower();
@@ -41,7 +44,7 @@ namespace MusicPlaylistOrganizer.Controllers
                     .ToList();
             }
 
-            // 🎛 FILTER by artist
+            // filter by artist
             if (artistFilter.HasValue && artistFilter.Value > 0)
             {
                 tracks = tracks
@@ -49,7 +52,7 @@ namespace MusicPlaylistOrganizer.Controllers
                     .ToList();
             }
 
-            // 🔽 SORT
+            // sort
             tracks = sortOrder switch
             {
                 "title_desc" => tracks.OrderByDescending(t => t.Title).ToList(),
@@ -86,7 +89,7 @@ namespace MusicPlaylistOrganizer.Controllers
             return View(tracks);
         }
 
-        // helper for the Artist dropdown
+        // helper for the Artist dropdown in Create/Edit
         private async Task PopulateArtistsDropDownList(int? selectedArtistId = null)
         {
             var artists = await _artistRepo.GetAllAsync();
@@ -98,13 +101,14 @@ namespace MusicPlaylistOrganizer.Controllers
         public async Task<IActionResult> Create()
         {
             await PopulateArtistsDropDownList();
-            return View();   // this should match Views/Tracks/Create.cshtml
+            return View();
         }
 
         // POST: /Tracks/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,DurationSeconds,ArtworkUrl,ApiSourceId,ArtistID")] Track track)
+        public async Task<IActionResult> Create(
+            [Bind("Title,DurationSeconds,ArtworkUrl,ApiSourceId,ArtistID")] Track track)
         {
             if (!ModelState.IsValid)
             {
@@ -113,7 +117,9 @@ namespace MusicPlaylistOrganizer.Controllers
             }
 
             await _trackRepo.AddAsync(track);
-            return RedirectToAction(nameof(Index));
+
+            // After creating, jump straight to Details so user can tweak and add to playlists
+            return RedirectToAction("Details", new { id = track.TrackID });
         }
 
         // GET: /Tracks/Details/5
@@ -121,6 +127,7 @@ namespace MusicPlaylistOrganizer.Controllers
         {
             var track = await _trackRepo.GetByIdAsync(id);
             if (track == null) return NotFound();
+
             ViewBag.Playlists = await _playlistRepo.GetAllAsync();
             return View(track);
         }
@@ -139,7 +146,9 @@ namespace MusicPlaylistOrganizer.Controllers
         // POST: /Tracks/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TrackID,Title,DurationSeconds,ArtworkUrl,ApiSourceId,ArtistID")] Track track)
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind("TrackID,Title,DurationSeconds,ArtworkUrl,ApiSourceId,ArtistID")] Track track)
         {
             if (id != track.TrackID) return BadRequest();
 

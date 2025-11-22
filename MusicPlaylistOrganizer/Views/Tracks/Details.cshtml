@@ -27,7 +27,7 @@
 
                     @if (!string.IsNullOrEmpty(Model.ApiSourceId))
                     {
-                        <p class="text-mute">@duration.Minutes:@duration.Seconds.ToString("D2") • From external API</p>
+                        <p class="text-mute">@duration.Minutes:@duration.Seconds.ToString("D2") • Imported From iTunes Library</p>
                     }
                     else
                     {
@@ -36,13 +36,30 @@
                         </p>
                     }
                 </div>
-                <div style="margin-top:15px;">
-                    <a asp-action="Edit" asp-route-id="@Model.TrackID" class="btn btn-other me-2 ps-4 pe-4 mt-xl-0 mt-sm-1" style="border-radius: 2rem;">Edit</a>
-                    <button type="submit" class="btn btn-delete me-2 ps-4 pe-4 mt-xl-0 mt-sm-1" style="border-radius: 2rem;">Delete</button>
-                    <a asp-action="Index" asp-route-id="@Model.TrackID" class="btn btn-other me-2 mt-xl-0 mt-lg-2 mt-sm-1 ps-4 pe-4" style="border-radius: 2rem;">Cancel</a>
+                <div style="margin-top:15px; display:flex; gap:10px;">
+
+                    <a asp-action="Edit"
+                       asp-route-id="@Model.TrackID"
+                       class="btn btn-other ps-4 pe-4"
+                       style="border-radius: 2rem;">
+                        Edit
+                    </a>
+
+                    <a asp-action="Delete"
+                       asp-route-id="@Model.TrackID"
+                       class="btn btn-delete ps-4 pe-4"
+                       style="border-radius: 2rem;">
+                        Delete
+                    </a>
+
+
+                    <a asp-action="Index"
+                       class="btn btn-other ps-4 pe-4"
+                       style="border-radius: 2rem;">
+                        Back
+                    </a>
 
                 </div>
-
             </div>
         </div>
         <div class="col-md-8 mt-md-0 mt-2">
