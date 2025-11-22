@@ -9,11 +9,13 @@ namespace MusicPlaylistOrganizer.Controllers
     {
         private readonly ITrackRepository _trackRepo;
         private readonly IArtistRepository _artistRepo;
+        private readonly IPlaylistRepository _playlistRepo;
 
-        public TracksController(ITrackRepository trackRepo, IArtistRepository artistRepo)
+        public TracksController(ITrackRepository trackRepo, IArtistRepository artistRepo, IPlaylistRepository playlistRepo)
         {
             _trackRepo = trackRepo;
             _artistRepo = artistRepo;
+            _playlistRepo = playlistRepo;
         }
 
         // GET: /Tracks
@@ -119,6 +121,7 @@ namespace MusicPlaylistOrganizer.Controllers
         {
             var track = await _trackRepo.GetByIdAsync(id);
             if (track == null) return NotFound();
+            ViewBag.Playlists = await _playlistRepo.GetAllAsync();
             return View(track);
         }
 

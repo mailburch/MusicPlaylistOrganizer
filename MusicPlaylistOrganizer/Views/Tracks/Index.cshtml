@@ -13,7 +13,7 @@
         <div class="col-md-3">
 
             <div class="bg-blue p-4" style="border-radius: 1rem; height: 100%;">
-                <p>Filters</p>
+                <p class="mb-0">Filters</p>
                 <form asp-action="Index" method="get" class="form-inline" style="margin-bottom:15px;">
                     <input type="text"
                            name="searchString"
@@ -36,12 +36,12 @@
                     <button type="submit" class="btn btn-blue mt-2 ps-3 pe-3 p-1">Apply</button>
                     <a asp-action="Index" class="btn btn-mute mt-2 ps-3 pe-3 p-1">Clear</a>
                 </form>
-                <p>Sort by</p>
+                <p class="mb-0">Sort by</p>
                 <a asp-action="Index"
                    asp-route-sortOrder="@ViewData["TitleSortParm"]"
                    asp-route-searchString="@currentSearch"
-                   asp-route-artistFilter="@currentArtist" class="btn btn-mute mt-2" style="width: 100%;">
-                    TRACK
+                   asp-route-artistFilter="@currentArtist" class="btn btn-mute mt-0" style="width: 100%;">
+                    TITLE
                 </a>
                 <a asp-action="Index"
                    asp-route-sortOrder="@ViewData["ArtistSortParm"]"
@@ -97,7 +97,7 @@
 
                                     @{
                                         var artworkUrl = string.IsNullOrEmpty(track.ArtworkUrl) ? "/Images/MPO_Logo.png" : track.ArtworkUrl;
-                                        var artworkStyle = "width:50px; height:50px; object-fit:cover; border-radius:10px; margin: 2% 0;";
+                                        var artworkStyle = "width:50px; height:50px; object-fit:cover; border-radius:8px; margin: 2% 0;";
                                     }
                                     <img src="@artworkUrl"
                                          alt="Artwork for @track.Title"
