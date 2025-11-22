@@ -3,31 +3,27 @@
 @{
     ViewData["Title"] = "Home";
 }
-
 <h1>Music Playlist Organizer</h1>
 
-<p> simple functional landing page for Sprint 2.</p>
+<p class="text-mute">Organize your tracks, artists and playlists in one simple place!</p>
 
-<div style="display:flex; gap:20px; margin-top:20px;">
-    <div style="border:1px solid #ccc; padding:20px; border-radius:8px;">
+<div style="display:flex; gap:3rem; margin-top:2rem;">
+    <div class="bg-blue" style="padding:1.5rem; border-radius: 1rem;">
         <h2>Artists</h2>
-        <p>@Model.ArtistCount total</p>
-        <a href="/Artists">View Artists &raquo;</a>
+        <p class="text-mute">@Model.ArtistCount total</p>
+        <a href="/Artists" class="btn btn-blue ps-4 pe-4 p-1">View Artists</a>
     </div>
 
-    <div style="border:1px solid #ccc; padding:20px; border-radius:8px;">
+    <div class="bg-blue" style="padding:1.5rem; border-radius: 1rem;">
         <h2>Tracks</h2>
-        <p>@Model.TrackCount total</p>
-        <a href="/Tracks">View Tracks &raquo;</a>
+        <p class="text-mute">@Model.TrackCount total</p>
+        <a href="/Tracks" class="btn btn-blue ps-4 pe-4 p-1">View Tracks</a>
     </div>
 
-    <div style="border:1px solid #ccc; padding:20px; border-radius:8px;">
+    <div class="bg-blue" style="padding:1.5rem; border-radius: 1rem;">
         <h2>Playlists</h2>
-        <p>@Model.PlaylistCount total</p>
-        <a href="/Playlists">View Playlists &raquo;</a>
+        <p class="text-mute">@Model.PlaylistCount total</p>
+        <a href="/Playlists" class="btn btn-blue ps-4 pe-4 p-1">View Playlists</a>
     </div>
 </div>
-
-<hr />
-
-<p>we will use this page to verify controllers + repos are working before UI styling.</p>
+</div>
