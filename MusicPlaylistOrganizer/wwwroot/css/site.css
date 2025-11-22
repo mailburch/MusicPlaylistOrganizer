@@ -185,3 +185,17 @@ th {
 .formField:-ms-input-placeholder {
     color: #666a8e;
 }
+/* Prevent Chrome autofill from turning background white */
+input.formField:-webkit-autofill,
+input.formField:-webkit-autofill:hover,
+input.formField:-webkit-autofill:focus,
+textarea.formField:-webkit-autofill,
+textarea.formField:-webkit-autofill:hover,
+textarea.formField:-webkit-autofill:focus,
+select.formField:-webkit-autofill,
+select.formField:-webkit-autofill:hover,
+select.formField:-webkit-autofill:focus {
+    background-color: #23274a !important;
+    -webkit-box-shadow: 0 0 0 1000px #23274a inset !important;
+    -webkit-text-fill-color: #d0d1d9 !important;
+}
