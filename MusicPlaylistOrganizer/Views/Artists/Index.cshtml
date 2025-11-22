@@ -2,84 +2,117 @@
 
 @{
     ViewData["Title"] = "Artists";
-    var currentSearch  = ViewData["CurrentFilter"] as string;
+    var currentSearch = ViewData["CurrentFilter"] as string;
     var currentCountry = ViewData["CurrentCountryFilter"] as string;
-    var countries      = ViewBag.CountryOptions as List<string> ?? new List<string>();
+    var countries = ViewBag.CountryOptions as List<string> ?? new List<string>();
 }
-
 <h1>Artists</h1>
+<div class="container-md">
+    <div class="row">
+        <div class="col-md-3">
 
-<form asp-action="Index" method="get" class="form-inline" style="margin-bottom:15px;">
-    <input type="text"
-           name="searchString"
-           value="@currentSearch"
-           class="form-control"
-           placeholder="Search by name or country..."
-           style="max-width:260px; display:inline-block;" />
+            <div class="bg-blue p-4" style="border-radius: 1rem; height: 100%;">
+                <p class="mb-0">Filters</p>
+                <form asp-action="Index" method="get" class="form-inline" style="margin-bottom:15px;">
+                    <input type="text"
+                           name="searchString"
+                           value="@currentSearch"
+                           class="form-control formField"
+                           placeholder="Search by name or country..."
+                           style="max-width:260px; display:inline-block;" />
 
-    <select name="countryFilter" class="form-control" style="max-width:180px; display:inline-block; margin-left:8px;">
-        <option value="ALL">All Countries</option>
-        @foreach (var c in countries)
-        {
-            <option value="@c" selected="@(currentCountry == c)">
-                @c
-            </option>
-        }
-    </select>
+                    <select name="countryFilter" class="form-control formField" style="max-width:220px; display:inline-block; margin-top:.5rem;">
+                        <option value="ALL">All Countries</option>
+                        @foreach (var c in countries)
+                        {
+                            <option value="@c" selected="@(currentCountry == c)">
+                                @c
+                            </option>
+                        }
+                    </select>
 
-    <button type="submit" class="btn btn-outline-primary" style="margin-left:8px;">Apply</button>
-    <a asp-action="Index" class="btn btn-link">Clear</a>
-</form>
-
-<p>
-    <a asp-action="Create" class="btn btn-primary">Add New Artist</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Artwork</th>
-            <th>
+                    <button type="submit" class="btn btn-blue mt-2 ps-3 pe-3 p-1">Apply</button>
+                    <a asp-action="Index" class="btn btn-mute mt-2 ps-3 pe-3 p-1">Clear</a>
+                </form>
+                <p class="mb-0">Sort by</p>
                 <a asp-action="Index"
                    asp-route-sortOrder="@ViewData["NameSortParm"]"
                    asp-route-searchString="@currentSearch"
-                   asp-route-countryFilter="@currentCountry">
+                   asp-route-countryFilter="@currentCountry" class="btn btn-mute mt-0" style="width: 100%;">
                     Name
                 </a>
-            </th>
-            <th>
                 <a asp-action="Index"
                    asp-route-sortOrder="@ViewData["CountrySortParm"]"
                    asp-route-searchString="@currentSearch"
-                   asp-route-countryFilter="@currentCountry">
+                   asp-route-countryFilter="@currentCountry" class="btn btn-mute mt-2" style="width: 100%;">
                     Country
                 </a>
-            </th>
-            <th>Tracks</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var artist in Model)
-    {
-        <tr>
-            <td>
-                @if (!string.IsNullOrEmpty(artist.ArtworkUrl))
-                {
-                    <img src="@artist.ArtworkUrl"
-                         alt="Artwork for @artist.Name"
-                         style="width:60px; height:60px; object-fit:cover; border-radius:4px;" />
-                }
-            </td>
-            <td>@artist.Name</td>
-            <td>@artist.Country</td>
-            <td>@(artist.Tracks?.Count ?? 0)</td>
-            <td>
-                <a asp-action="Details" asp-route-id="@artist.ArtistID">Details</a> |
-                <a asp-action="Edit" asp-route-id="@artist.ArtistID">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@artist.ArtistID">Delete</a>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <h5 style="margin-left: .5%;">Your Artists</h5>
+            <p>
+                <a asp-action="Create" class="btn btn-blue">+ Add Artist</a>
+            </p>
+
+            <table class="table-mpo">
+                <thead>
+                    <tr>
+                        <th>
+                            <a asp-action="Index"
+                               asp-route-sortOrder="@ViewData["NameSortParm"]"
+                               asp-route-searchString="@currentSearch"
+                               asp-route-countryFilter="@currentCountry" class="text-link-mute" style="text-decoration: none;">
+                                ARTIST
+                            </a>
+                        </th>
+                        <th>
+
+                        </th>
+                        <th class="text-mute">TRACKS</th>
+                        <th class="text-mute">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var artist in Model)
+                    {
+                        <tr class="track-row">
+                            <td style="padding-right .2rem;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                @if (!string.IsNullOrEmpty(artist.ArtworkUrl))
+                                {
+                                    <img src="@artist.ArtworkUrl"
+                                         alt="Artwork for @artist.Name"
+                                         style="width:50px; height:50px; object-fit:cover; border-radius:8px; margin: .4rem 0;" />
+                                }
+                                else
+                                {
+                                    <img src="~/Images/NoArtist.jpg"
+                                         alt="Artwork missing for @artist.Name"
+                                         style="width:50px; height:50px; object-fit:cover; border-radius:8px; margin: .4rem 0;" />
+
+                                }
+                                <div style="display: flex; flex-direction: column; justify-content: center;">
+                                    <div style="line-height: 1.2;">
+                                        <strong>@artist.Name</strong>
+                                    </div>
+                                    <div class="text-mute" style="line-height: 1.2;">@artist.Country</div>
+                                </div>
+                                </div>
+                            </td>
+                            <td>
+
+                            </td>
+                            <td class="text-mute">@(artist.Tracks?.Count ?? 0) Tracks</td>
+                            <td>
+                                <a asp-action="Details" class="btn btn-other m-1 ms-0" asp-route-id="@artist.ArtistID">Details</a>
+                                <a asp-action="Edit" class="btn btn-other m-1 ms-0" asp-route-id="@artist.ArtistID">Edit</a>
+                                <a asp-action="Delete" class="btn btn-delete m-1 ms-0" asp-route-id="@artist.ArtistID">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

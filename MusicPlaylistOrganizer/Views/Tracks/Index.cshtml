@@ -22,7 +22,7 @@
                            placeholder="Search by title or artist..."
                            style="max-width:260px; display:inline-block;" />
 
-                    <select name="artistFilter" class="form-control formField" style="max-width:220px; display:inline-block; margin-top:3%;">
+                    <select name="artistFilter" class="form-control formField" style="max-width:220px; display:inline-block; margin-top:.5rem;">
                         <option value="">All Artists</option>
                         @foreach (var a in artistOptions)
                         {
@@ -96,7 +96,7 @@
                                 <div style="display: flex; align-items: center; gap: 10px;">
 
                                     @{
-                                        var artworkUrl = string.IsNullOrEmpty(track.ArtworkUrl) ? "/Images/MPO_Logo.png" : track.ArtworkUrl;
+                                        var artworkUrl = string.IsNullOrEmpty(track.ArtworkUrl) ? "/Images/NoArtwork.jpg" : track.ArtworkUrl;
                                         var artworkStyle = "width:50px; height:50px; object-fit:cover; border-radius:8px; margin: 2% 0;";
                                     }
                                     <img src="@artworkUrl"

@@ -15,6 +15,12 @@
                 {
                     <img src="@Model.ArtworkUrl"
                          alt="Artwork for @Model.Title"
+                    style="width:200px; height:200px; object-fit:cover; border-radius:8px;" />
+                }
+                else
+                {
+                    <img src="~/Images/NoArtwork.jpg"
+                         alt="Artwork missing for @Model.Title"
                          style="width:200px; height:200px; object-fit:cover; border-radius:8px;" />
                 }
                 <div style="width: 100%; text-align: left;">

@@ -18,8 +18,14 @@
                 {
                     <img src="@Model.ArtworkUrl"
                          alt="Artwork for @Model.Title"
-                         style="width:120px; height:120px; object-fit:cover; border-radius:8px;" />
-                }
+                        style="width:120px; height:120px; object-fit:cover; border-radius:8px;" />
+                    }
+                    else
+                    {
+                        <img src="~/Images/NoArtwork.jpg"
+                             alt="Artwork missing for @Model.Title"
+                             style="width:120px; height:120px; object-fit:cover; border-radius:8px;" />
+                    }
 
                 <div>
 

@@ -154,32 +154,34 @@ th {
         }
 
 /* Style the form field */
-.formField {
-    background-color: #23274a;
+.form-control.formField {
+    background-color: #23274a !important;
+    color: #d0d1d9 !important;
+}
+
+    .form-control.formField:focus {
+        background-color: #23274a !important;
+        color: #d0d1d9 !important;
+    }
+
+    .form-control.formField:not(:placeholder-shown) {
+        background-color: #23274a !important;
+        color: #d0d1d9 !important;
+    }
+
+
+/* For Chrome, Edge, Safari, Opera */
+.formField::-webkit-input-placeholder {
     color: #666a8e;
 }
 
-    .formField:focus {
-        background-color: #23274a;
-        color: #d0d1d9;
-    }
+/* For Firefox 19+ */
+.formField:-moz-placeholder {
+    color: #666a8e;
+    opacity: 1;
+}
 
-    .formField::placeholder {
-        color: #666a8e;
-    }
-
-    /* For Chrome, Edge, Safari, Opera */
-    .formField::-webkit-input-placeholder {
-        color: #666a8e;
-    }
-
-    /* For Firefox 19+ */
-    .formField:-moz-placeholder {
-        color: #666a8e;
-        opacity: 1;
-    }
-
-    /* For Internet Explorer 10-11 */
-    .formField:-ms-input-placeholder {
-        color: #666a8e;
-    }
+/* For Internet Explorer 10-11 */
+.formField:-ms-input-placeholder {
+    color: #666a8e;
+}
