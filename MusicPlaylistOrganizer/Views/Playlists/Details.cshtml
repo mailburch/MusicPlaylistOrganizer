@@ -6,14 +6,62 @@
 
 <h1>Playlist Details</h1>
 
-<div>
-    <h2>@Model.Name</h2>
-    <p>@Model.Description</p>
+<div class=" container bg-blue p-4" style="border-radius: 1rem;">
+    <div class="row">
+        <div class="col-md-2">
+            @{
+                var firstArtwork = Model.PlaylistTracks?
+                .FirstOrDefault()?
+                .Track?
+                .ArtworkUrl;
+            }
+            @if (!string.IsNullOrEmpty(firstArtwork))
+            {
+                <img src="@firstArtwork"
+                     alt="@Model.Name Album Art"
+                     class="img-fluid rounded-3"
+                     style="width: 100px; height: 100px; object-fit:fill;" />
+            }
+            else
+            {
+                <img src="~/Images/NoArtwork.jpg"
+                     alt="@Model.Name Album Art Missing"
+                     class="img-fluid rounded-3"
+                     style="width: 100px; height: 100px; object-fit:cover;" />
+
+            }
+
+        </div>
+        <div class="col-md-5">
+            <h2>@Model.Name</h2>
+            <div class="mb-0 text-mute">
+                @(Model.PlaylistTracks?.Count ?? 0) Tracks
+
+
+            </div>
+            <p class="text-mute m-0">@Model.Description</p>
+        </div>
+        <div class="col-md-5" ">
+            <a asp-action="Edit"
+               asp-route-id="@Model.PlaylistID"
+               class="btn btn-other ps-4 pe-4"
+               style="border-radius: 2rem;">
+                Edit Playlist
+            </a>
+            <a asp-action="Index"
+               class="btn btn-other ps-4 pe-4"
+               style="border-radius: 2rem;">
+                Back
+            </a>
+            <a asp-action="Delete"
+               asp-route-id="@Model.PlaylistID"
+               class="btn btn-delete ps-4 pe-4"
+               style="border-radius: 2rem;">
+                Delete
+            </a>
+        </div>
+    </div>
 </div>
-
-<hr />
-
-<h3>Tracks in this Playlist</h3>
 
 @if (Model.PlaylistTracks == null || !Model.PlaylistTracks.Any())
 {
@@ -21,27 +69,61 @@
 }
 else
 {
-    <ul>
-        @foreach (var pt in Model.PlaylistTracks.OrderBy(pt => pt.Position))
-        {
-            <li style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-                @* Artwork thumbnail, if available *@
-                @if (!string.IsNullOrEmpty(pt.Track?.ArtworkUrl))
-                {
-                    <img src="@pt.Track.ArtworkUrl"
-                         alt="Cover for @pt.Track.Title"
-                         style="width:75px; height:75px; object-fit:cover; border-radius:4px;" />
-                }
+    <table class="table-mpo">
+        <thead>
+            <tr class="m-0">
+                <th class="text-mute">TRACKS</th>
+                <th class="text-mute">DURATION</th>
+            </tr>
 
-                <span>
-                    @pt.Position. @pt.Track.Title (@pt.Track.Artist.Name)
-                </span>
-            </li>
-        }
-    </ul>
+
+
+
+        </thead>
+        <tbody>
+            @foreach (var pt in Model.PlaylistTracks.OrderBy(pt => pt.Position))
+            {
+                var duration = TimeSpan.FromSeconds(pt.Track.DurationSeconds);
+                <tr class="track-row">
+
+                    <td class="p-2" style="padding-right:1%;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            @pt.Position.
+                            @* Artwork thumbnail, if available *@
+                            @if (!string.IsNullOrEmpty(pt.Track?.ArtworkUrl))
+                            {
+                                <img src="@pt.Track.ArtworkUrl"
+                                     alt="Cover for @pt.Track.Title"
+                                     style="width:50px; height:50px; object-fit:cover; border-radius:4px;" />
+                            }
+                            else
+                            {
+                                <img src="~/Images/NoArtwork.jpg"
+                                     alt="Cover missing"
+                                     style="width:50px; height:50px; object-fit:cover; border-radius:4px;" />
+                            }
+                            <div style="display: flex; flex-direction: column; justify-content: center;">
+                                <div style="line-height: 1.2;">@pt.Track.Title</div>
+                                <div class="text-mute">@pt.Track.Artist.Name</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-mute">@duration.Minutes:@duration.Seconds.ToString("D2")</td>
+                    <td>
+                        <input type="hidden" name="playlistId" value="@Model.PlaylistID" />
+                        <input type="hidden" name="trackId" value="@pt.TrackID" />
+                        <button type="submit" class="btn btn-other">Remove</button>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
 }
+<a asp-action="EditTracks"
+   asp-route-id="@Model.PlaylistID"
+   class="btn btn-blue ps-4 pe-4 p-2 mt-4"
+   style="border-radius: 2rem;">
+    Edit Tracks
+</a>
 
-<div style="margin-top:15px;">
-    <a asp-action="Edit" asp-route-id="@Model.PlaylistID" class="btn btn-primary">Edit</a>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</div>

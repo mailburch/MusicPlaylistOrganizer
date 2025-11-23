@@ -5,283 +5,75 @@
     var allTracks = ViewBag.AllTracks as IEnumerable<MusicPlaylistOrganizer.Models.Track>;
 }
 
-<h1>Edit Playlist: @Model.Name</h1>
+<h1>Edit Playlist</h1>
 
-<!-- Playlist info form -->
-<form asp-action="Edit" method="post">
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="PlaylistID" />
-
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-
-    <div class="form-group" style="margin-top:10px;">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-
-    <div style="margin-top:15px;">
-        <button type="submit" class="btn btn-primary">Save Playlist Info</button>
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-    </div>
-</form>
-
-<hr />
-
-<h2>Tracks in this Playlist</h2>
-
-<ul id="playlist-tracks">
-    @if (Model.PlaylistTracks == null || !Model.PlaylistTracks.Any())
-    {
-        <li>No tracks in this playlist yet.</li>
-    }
-    else
-    {
-        @foreach (var pt in Model.PlaylistTracks.OrderBy(pt => pt.Position))
-        {
-            <li class="playlist-item"
-                draggable="true"
-                data-track-id="@pt.TrackID"
-                style="display:flex; align-items:center; gap:10px; margin-bottom:8px; cursor:grab;">
-
-                @* Artwork thumbnail, if available *@
-                @if (!string.IsNullOrEmpty(pt.Track?.ArtworkUrl))
-                {
-                    <img src="@pt.Track.ArtworkUrl"
-                         alt="Cover for @pt.Track.Title"
-                         style="width:75px; height:75px; object-fit:cover; border-radius:4px;" />
-                }
-
-                <span class="track-text">
-                    @pt.Position. @pt.Track.Title (@pt.Track.Artist.Name)
-                </span>
-
-                <!-- Remove track from playlist -->
-                <form asp-action="RemoveTrack" method="post" style="display:inline; margin-left:auto;">
+<div class="container-md">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="bg-blue p-4" style="border-radius: 1rem; height: 100%;">
+                <h5>Edit Playlist</h5>
+                <!-- Playlist info form -->
+                <form asp-action="Edit" method="post">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" name="playlistId" value="@Model.PlaylistID" />
-                    <input type="hidden" name="trackId" value="@pt.TrackID" />
-                    <button type="submit" class="btn btn-link text-danger remove-btn">Remove</button>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <input type="hidden" asp-for="PlaylistID" />
+                            <div class="form-group">
+                                <label asp-for="Name"></label>
+                                <input asp-for="Name" class="form-control formField" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group" style="margin-top:10px;">
+                                <label asp-for="Description"></label>
+                                <textarea asp-for="Description" class="form-control formField"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+
+                            <div style="margin-top:15px;">
+                                <button type="submit" class="btn btn-blue">Save Playlist Info</button>
+                                <a asp-action="EditTracks"
+                                   asp-route-id="@Model.PlaylistID"
+                                   class="btn btn-other ps-4 pe-4 p-1"
+                                   style="border-radius: 2rem;">
+                                    Edit Tracks
+                                </a>
+                                <a asp-action="Index" class="btn btn-mute">Cancel</a>
+                                
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <p class="text-mute m-0">Cover Artwork</p>
+                            @{
+                                var firstArtwork = Model.PlaylistTracks?
+                                .FirstOrDefault()?
+                                .Track?
+                                .ArtworkUrl;
+                            }
+                            @if (!string.IsNullOrEmpty(firstArtwork))
+                            {
+                                <img src="@firstArtwork"
+                                     alt="@Model.Name Album Art"
+                                     class="img-fluid rounded-3"
+                                     style="width: 150px; height: 150px; object-fit:fill;" />
+                            }
+                            else
+                            {
+                                <img src="~/Images/NoArtwork.jpg"
+                                     alt="@Model.Name Album Art Missing"
+                                     class="img-fluid rounded-3"
+                                     style="width: 150px; height: 150px; object-fit:cover;" />
+
+                            }
+                        </div>
+                    </div>
                 </form>
-            </li>
-        }
-    }
-</ul>
-
-<button type="button" id="saveOrderBtn" class="btn btn-secondary" style="margin-top:10px;">
-    Save Track Order
-</button>
-
-<hr />
-
-<h2>Add Existing Track</h2>
-
-@if (allTracks != null && allTracks.Any())
-{
-    <form asp-action="AddTrack" method="post">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="playlistId" value="@Model.PlaylistID" />
-
-        <div class="form-group">
-            <label for="trackId">Select a track:</label>
-            <select name="trackId" id="trackId" class="form-control">
-                @foreach (var t in allTracks.OrderBy(t => t.Title))
-                {
-                    <option value="@t.TrackID">
-                        @t.Title (@t.Artist.Name)
-                    </option>
-                }
-            </select>
+            </div>
         </div>
-
-        <div style="margin-top:10px;">
-            <button type="submit" class="btn btn-success">Add Track</button>
-        </div>
-    </form>
-}
-else
-{
-    <p>No tracks exist yet. Create some tracks first.</p>
-}
-
-<hr />
-
-<h2>Add Track from Online Catalog</h2>
-
-<div>
-    <input type="text" id="catalogQuery" placeholder="Search for a song..." />
-    <button type="button" id="catalogSearchBtn">Search</button>
+    </div>
 </div>
 
-<div id="catalogResults"></div>
 
-@section Scripts {
-    <script>
-        // ===== DRAG & DROP REORDERING =====
 
-        const listEl = document.getElementById('playlist-tracks');
-        let draggedItem = null;
 
-        listEl.addEventListener('dragstart', function (e) {
-            const li = e.target.closest('.playlist-item');
-            if (!li) return;
-            draggedItem = li;
-            e.dataTransfer.effectAllowed = 'move';
-        });
-
-        listEl.addEventListener('dragover', function (e) {
-            e.preventDefault(); // allow drop
-            const li = e.target.closest('.playlist-item');
-            if (!li || li === draggedItem) return;
-
-            const rect = li.getBoundingClientRect();
-            const offset = e.clientY - rect.top;
-
-            if (offset > rect.height / 2) {
-                li.parentNode.insertBefore(draggedItem, li.nextSibling);
-            } else {
-                li.parentNode.insertBefore(draggedItem, li);
-            }
-        });
-
-        listEl.addEventListener('drop', function (e) {
-            e.preventDefault();
-            draggedItem = null;
-            // you could visually renumber here if you want,
-            // but we'll recalc on save in the backend anyway
-        });
-
-        // Prevent drag start when clicking Remove button
-        document.querySelectorAll('.remove-btn').forEach(btn => {
-            btn.addEventListener('mousedown', e => e.stopPropagation());
-        });
-
-        document.getElementById('saveOrderBtn').addEventListener('click', function () {
-            const items = document.querySelectorAll('#playlist-tracks .playlist-item');
-            const trackIds = Array.from(items).map(li => parseInt(li.dataset.trackId));
-
-            const payload = {
-                playlistId: @Model.PlaylistID,
-                trackIds: trackIds
-            };
-
-            fetch('/Playlists/ReorderTracks', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': getAntiForgeryToken()
-                },
-                body: JSON.stringify(payload)
-            })
-            .then(r => {
-                if (!r.ok) throw new Error('Failed to save order.');
-                return r.json();
-            })
-            .then(result => {
-                if (result.success) {
-                    location.reload();
-                } else {
-                    alert('Failed to save order.');
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Error saving order.');
-            });
-        });
-
-        // ===== EXISTING CATALOG SEARCH CODE =====
-
-        document.getElementById('catalogSearchBtn').addEventListener('click', function () {
-            const query = document.getElementById('catalogQuery').value;
-            if (!query) return;
-
-            fetch('/Catalog/SearchTracks?query=' + encodeURIComponent(query))
-                .then(r => r.json())
-                .then(data => {
-                    const container = document.getElementById('catalogResults');
-                    container.innerHTML = '';
-
-                    if (!data || data.length === 0) {
-                        container.innerHTML = '<p>No results.</p>';
-                        return;
-                    }
-
-                    const list = document.createElement('ul');
-                    list.style.listStyle = "none";
-                    list.style.padding = "0";
-
-                    data.forEach(item => {
-                        const li = document.createElement('li');
-                        li.style.display = "flex";
-                        li.style.alignItems = "center";
-                        li.style.gap = "10px";
-                        li.style.marginBottom = "10px";
-
-                        const img = document.createElement('img');
-                        img.src = item.artworkUrl100;
-                        img.alt = item.trackName;
-                        img.style.width = "60px";
-                        img.style.height = "60px";
-                        img.style.objectFit = "cover";
-                        img.style.borderRadius = "4px";
-
-                        const text = document.createElement('span');
-                        text.textContent = item.trackName + " — " + item.artistName;
-
-                        const btn = document.createElement('button');
-                        btn.textContent = "Add to playlist";
-                        btn.style.marginLeft = "auto";
-                        btn.addEventListener('click', function () {
-                            importTrackToPlaylist(item);
-                        });
-
-                        li.appendChild(img);
-                        li.appendChild(text);
-                        li.appendChild(btn);
-                        list.appendChild(li);
-                    });
-
-                    container.appendChild(list);
-                });
-        });
-
-        function importTrackToPlaylist(item) {
-            const payload = {
-                trackApiId: item.trackId.toString(),
-                artistApiId: item.artistId.toString(),
-                trackName: item.trackName,
-                artistName: item.artistName,
-                durationMillis: item.trackTimeMillis,
-                artworkUrl: item.artworkUrl100,
-                playlistId: @Model.PlaylistID
-            };
-
-            fetch('/Catalog/ImportTrack', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': getAntiForgeryToken()
-                },
-                body: JSON.stringify(payload)
-            })
-            .then(r => r.json())
-            .then(result => {
-                if (result.success) {
-                    location.reload();
-                } else {
-                    alert('Failed to import track.');
-                }
-            });
-        }
-
-        function getAntiForgeryToken() {
-            const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
-            return tokenInput ? tokenInput.value : '';
-        }
-    </script>
-}
