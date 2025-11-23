@@ -108,7 +108,7 @@ th {
 .btn-other {
     color: #d0d1d9;
     background-color: #23274a;
-    padding: 2% 5%;
+    padding: .5rem 1rem;
 }
 
     .btn-other:hover {

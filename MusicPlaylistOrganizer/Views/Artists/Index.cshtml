@@ -18,11 +18,11 @@
                            name="searchString"
                            value="@currentSearch"
                            class="form-control formField"
-                           placeholder="Search by name or country..."
+                           placeholder="Search by name..."
                            style="max-width:260px; display:inline-block;" />
 
                     <select name="countryFilter" class="form-control formField" style="max-width:220px; display:inline-block; margin-top:.5rem;">
-                        <option value="ALL">All Countries</option>
+                        <option value="ALL">Genre</option>
                         @foreach (var c in countries)
                         {
                             <option value="@c" selected="@(currentCountry == c)">
@@ -45,7 +45,7 @@
                    asp-route-sortOrder="@ViewData["CountrySortParm"]"
                    asp-route-searchString="@currentSearch"
                    asp-route-countryFilter="@currentCountry" class="btn btn-mute mt-2" style="width: 100%;">
-                    Country
+                    Genre
                 </a>
             </div>
         </div>

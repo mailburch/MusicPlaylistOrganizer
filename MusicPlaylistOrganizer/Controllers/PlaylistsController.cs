@@ -142,10 +142,9 @@ namespace MusicPlaylistOrganizer.Controllers
 
             await _playlistRepo.UpdateAsync(playlist);
             return RedirectToAction(nameof(Edit), new { id = playlist.PlaylistID });
-        }
-
+       }
         // GET: /Playlists/Edit/5
-        public async Task<IActionResult> EditTracks(int id)
+        public async Task<IActionResult> EditPlaylist(int id)
         {
             var playlist = await _playlistRepo.GetWithTracksAsync(id);
             if (playlist == null)
@@ -163,7 +162,7 @@ namespace MusicPlaylistOrganizer.Controllers
         // POST: /Playlists/Edit/5 (update playlist name/description)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditTracks(int id, [Bind("PlaylistID,Name,Description")] Playlist playlist)
+        public async Task<IActionResult> EditPlaylist(int id, [Bind("PlaylistID,Name,Description")] Playlist playlist)
         {
             if (id != playlist.PlaylistID)
                 return BadRequest();
@@ -176,6 +175,7 @@ namespace MusicPlaylistOrganizer.Controllers
             await _playlistRepo.UpdateAsync(playlist);
             return RedirectToAction(nameof(Edit), new { id = playlist.PlaylistID });
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ReorderTracks([FromBody] ReorderTracksViewModel model)

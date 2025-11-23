@@ -42,7 +42,7 @@
             <p class="text-mute m-0">@Model.Description</p>
         </div>
         <div class="col-md-5" ">
-            <a asp-action="Edit"
+            <a asp-action="EditPlaylist"
                asp-route-id="@Model.PlaylistID"
                class="btn btn-other ps-4 pe-4"
                style="border-radius: 2rem;">
@@ -120,7 +120,7 @@ else
         </tbody>
     </table>
 }
-<a asp-action="EditTracks"
+<a asp-action="Edit"
    asp-route-id="@Model.PlaylistID"
    class="btn btn-blue ps-4 pe-4 p-2 mt-4"
    style="border-radius: 2rem;">
