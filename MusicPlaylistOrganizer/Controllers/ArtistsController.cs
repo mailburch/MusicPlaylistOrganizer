@@ -27,14 +27,14 @@ namespace MusicPlaylistOrganizer.Controllers
 
             var artists = await _artistRepo.GetAllAsync(); // includes Tracks
 
-            // 🔍 SEARCH by name or country
+            // 🔍 SEARCH by name or genre
             if (!string.IsNullOrWhiteSpace(searchString))
             {
                 var term = searchString.ToLower();
                 artists = artists
                     .Where(a =>
                         a.Name.ToLower().Contains(term) ||
-                        (!string.IsNullOrEmpty(a.Country) && a.Country!.ToLower().Contains(term)))
+                        (!string.IsNullOrEmpty(a.Genre) && a.Genre!.ToLower().Contains(term)))
                     .ToList();
             }
 
@@ -42,7 +42,7 @@ namespace MusicPlaylistOrganizer.Controllers
             if (!string.IsNullOrWhiteSpace(countryFilter) && countryFilter != "ALL")
             {
                 artists = artists
-                    .Where(a => a.Country != null && a.Country == countryFilter)
+                    .Where(a => a.Genre != null && a.Genre == countryFilter)
                     .ToList();
             }
 
@@ -51,13 +51,13 @@ namespace MusicPlaylistOrganizer.Controllers
             {
                 "name_desc" => artists.OrderByDescending(a => a.Name).ToList(),
 
-                "country" => artists
-                    .OrderBy(a => a.Country ?? "")
+                "genre" => artists
+                    .OrderBy(a => a.Genre ?? "")
                     .ThenBy(a => a.Name)
                     .ToList(),
 
-                "country_desc" => artists
-                    .OrderByDescending(a => a.Country ?? "")
+                "genre_desc" => artists
+                    .OrderByDescending(a => a.Genre ?? "")
                     .ThenBy(a => a.Name)
                     .ToList(),
 
@@ -66,8 +66,8 @@ namespace MusicPlaylistOrganizer.Controllers
 
             // build country list for dropdown
             var countries = artists
-                .Where(a => !string.IsNullOrEmpty(a.Country))
-                .Select(a => a.Country!)
+                .Where(a => !string.IsNullOrEmpty(a.Genre))
+                .Select(a => a.Genre!)
                 .Distinct()
                 .OrderBy(c => c)
                 .ToList();
