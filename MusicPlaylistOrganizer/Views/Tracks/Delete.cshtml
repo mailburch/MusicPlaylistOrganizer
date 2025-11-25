@@ -43,6 +43,7 @@
             <form asp-action="Delete" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="TrackID" />
+                    <input type="hidden" name="artistId" value="@ViewBag.ArtistId" />
                 <button type="submit" class="btn btn-delete mt-5 me-5 ps-5 pe-5" style="border-radius: 2rem;">Delete</button>
                     <a asp-action="Index" class="btn btn-other mt-5 me-5 ps-5 pe-5" style="border-radius: 2rem;">Cancel</a>
             </form>
