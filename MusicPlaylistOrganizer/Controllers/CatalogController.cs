@@ -141,7 +141,7 @@ namespace MusicPlaylistOrganizer.Controllers
                     primaryArtist = await _artistRepo.GetOrCreateFromApiAsync(
                         apiSourceId: model.ArtistApiId,
                         name: artistNameRaw,
-                        country: null
+                        genre: null
                     );
                 }
             }

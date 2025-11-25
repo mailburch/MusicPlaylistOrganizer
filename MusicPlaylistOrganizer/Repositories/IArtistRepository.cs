@@ -8,13 +8,13 @@ namespace MusicPlaylistOrganizer.Repositories
         Task<Artist?> GetByIdAsync(int id);
 
         Task<Artist?> GetByApiSourceIdAsync(string apiSourceId);
-        Task<Artist> GetOrCreateFromApiAsync(string apiSourceId, string name, string? country = null);
+        Task<Artist> GetOrCreateFromApiAsync(string apiSourceId, string name, string? genre = null);
 
         Task AddAsync(Artist artist);
         Task UpdateAsync(Artist artist);
         Task DeleteAsync(int id);
         Task<Artist?> GetByNameAsync(string name);
-        Task<Artist> GetOrCreateByNameAsync(string name, string? artworkUrl = null, string? country = null);
+        Task<Artist> GetOrCreateByNameAsync(string name, string? artworkUrl = null, string? genre = null);
 
     }
 }

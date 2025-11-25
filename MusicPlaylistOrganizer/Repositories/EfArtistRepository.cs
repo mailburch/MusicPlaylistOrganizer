@@ -39,7 +39,7 @@ namespace MusicPlaylistOrganizer.Repositories
         // 2) If not found, try by Name (case-insensitive)
         // 3) If found by name, attach ApiSourceId if missing
         // 4) Else create new
-        public async Task<Artist> GetOrCreateFromApiAsync(string apiSourceId, string name, string? country = null)
+        public async Task<Artist> GetOrCreateFromApiAsync(string apiSourceId, string name, string? genre = null)
         {
             var trimmedName = name?.Trim() ?? string.Empty;
 
@@ -64,10 +64,10 @@ namespace MusicPlaylistOrganizer.Repositories
                 if (!string.IsNullOrWhiteSpace(apiSourceId) && string.IsNullOrEmpty(byName.ApiSourceId))
                 {
                     byName.ApiSourceId = apiSourceId;
-                    // Optionally update country if we didn't have one
-                    if (string.IsNullOrEmpty(byName.Genre) && !string.IsNullOrEmpty(country))
+                    // Optionally update genre if we didn't have one
+                    if (string.IsNullOrEmpty(byName.Genre) && !string.IsNullOrEmpty(genre))
                     {
-                        byName.Genre = country;
+                        byName.Genre = genre;
                     }
 
                     await _context.SaveChangesAsync();
@@ -80,7 +80,7 @@ namespace MusicPlaylistOrganizer.Repositories
             var artist = new Artist
             {
                 Name = trimmedName,
-                Genre = country,
+                Genre = genre,
                 ApiSourceId = apiSourceId
                 // ArtworkUrl intentionally NOT set here (track import handles it)
             };
