@@ -15,15 +15,15 @@ namespace MusicPlaylistOrganizer.Controllers
 
 
         // GET: /Artists
-        public async Task<IActionResult> Index(string? sortOrder, string? searchString, string? countryFilter)
+        public async Task<IActionResult> Index(string? sortOrder, string? searchString, string? genreFilter)
         {
             // sort route values for column headers
             ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["CountrySortParm"] = sortOrder == "country" ? "country_desc" : "country";
+            ViewData["GenreSortParm"] = sortOrder == "genre" ? "genre_desc" : "genre";
 
             // keep filters/search in ViewData so UI keeps values
             ViewData["CurrentFilter"] = searchString;
-            ViewData["CurrentCountryFilter"] = countryFilter;
+            ViewData["CurrentGenreFilter"] = genreFilter;
 
             var artists = await _artistRepo.GetAllAsync(); // includes Tracks
 
@@ -38,11 +38,11 @@ namespace MusicPlaylistOrganizer.Controllers
                     .ToList();
             }
 
-            // 🎛 FILTER by country (exact match)
-            if (!string.IsNullOrWhiteSpace(countryFilter) && countryFilter != "ALL")
+            // 🎛 FILTER by Genre (exact match)
+            if (!string.IsNullOrWhiteSpace(genreFilter) && genreFilter != "ALL")
             {
                 artists = artists
-                    .Where(a => a.Genre != null && a.Genre == countryFilter)
+                    .Where(a => a.Genre != null && a.Genre == genreFilter)
                     .ToList();
             }
 
@@ -64,7 +64,7 @@ namespace MusicPlaylistOrganizer.Controllers
                 _ => artists.OrderBy(a => a.Name).ToList()
             };
 
-            // build country list for dropdown
+            // build genre list for dropdown
             var countries = artists
                 .Where(a => !string.IsNullOrEmpty(a.Genre))
                 .Select(a => a.Genre!)
@@ -72,7 +72,7 @@ namespace MusicPlaylistOrganizer.Controllers
                 .OrderBy(c => c)
                 .ToList();
 
-            ViewBag.CountryOptions = countries;
+            ViewBag.GenreOptions = countries;
 
             return View(artists);
         }
@@ -94,7 +94,7 @@ namespace MusicPlaylistOrganizer.Controllers
         // POST: /Artists/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Country,ApiSourceId,ArtworkUrl")] Artist artist)
+        public async Task<IActionResult> Create([Bind("Name,Genre,ApiSourceId,ArtworkUrl")] Artist artist)
         {
             if (!ModelState.IsValid)
             {
@@ -116,7 +116,7 @@ namespace MusicPlaylistOrganizer.Controllers
         // POST: /Artists/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ArtistID,Name,Country,ApiSourceId,ArtworkUrl")] Artist artist)
+        public async Task<IActionResult> Edit(int id, [Bind("ArtistID,Name,Genre,ApiSourceId,ArtworkUrl")] Artist artist)
         {
             if (id != artist.ArtistID)
                 return BadRequest();

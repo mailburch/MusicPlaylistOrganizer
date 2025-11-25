@@ -46,19 +46,11 @@
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
 
-<<<<<<< Updated upstream
                             <div class="form-group" style="margin-top:10px;">
-                                <label asp-for="Genre">Genre</label>
+                                <label asp-for="Genre"></label>
                                 <input asp-for="Genre" class="form-control formField" />
                                 <span asp-validation-for="Genre" class="text-danger"></span>
                             </div>
-=======
-            <div class="form-group" style="margin-top:10px;">
-                <label asp-for="Genre"></label>
-                <input asp-for="Genre" class="form-control formField" />
-                <span asp-validation-for="Genre" class="text-danger"></span>
-            </div>
->>>>>>> Stashed changes
 
                             <div class="form-group" style="margin-top:10px;">
                                 <label asp-for="ArtworkUrl">Artwork URL</label>
@@ -147,13 +139,13 @@
                         btn.style.marginLeft = "auto";
                         btn.addEventListener('click', function () {
                             const nameInput = document.getElementById('Name');
-                            const countryInput = document.getElementById('Country');
+                            const genreInput = document.getElementById('Genre');
                             const artworkInput = document.getElementById('ArtworkUrl');
                             const apiSourceInput = document.getElementById('ApiSourceId');
 
                             if (nameInput) nameInput.value = item.artistName || "";
-                            if (countryInput && item.primaryGenreName) {
-                                countryInput.value = item.primaryGenreName;
+                            if (genreInput && item.primaryGenreName) {
+                                genreInput.value = item.primaryGenreName;
                             }
                             if (artworkInput && item.artworkUrl100) {
                                 artworkInput.value = item.artworkUrl100;

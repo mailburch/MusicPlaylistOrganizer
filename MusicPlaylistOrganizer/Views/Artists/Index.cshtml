@@ -3,8 +3,8 @@
 @{
     ViewData["Title"] = "Artists";
     var currentSearch = ViewData["CurrentFilter"] as string;
-    var currentCountry = ViewData["CurrentCountryFilter"] as string;
-    var countries = ViewBag.CountryOptions as List<string> ?? new List<string>();
+    var currentGenre = ViewData["CurrentGenreFilter"] as string;
+    var countries = ViewBag.GenreOptions as List<string> ?? new List<string>();
 }
 <h1>Artists</h1>
 <div class="container-md">
@@ -21,11 +21,11 @@
                            placeholder="Search by name..."
                            style="max-width:260px; display:inline-block;" />
 
-                    <select name="countryFilter" class="form-control formField" style="max-width:220px; display:inline-block; margin-top:.5rem;">
+                    <select name="GenreFilter" class="form-control formField" style="max-width:220px; display:inline-block; margin-top:.5rem;">
                         <option value="ALL">Genre</option>
                         @foreach (var c in countries)
                         {
-                            <option value="@c" selected="@(currentCountry == c)">
+                            <option value="@c" selected="@(currentGenre == c)">
                                 @c
                             </option>
                         }
@@ -38,13 +38,13 @@
                 <a asp-action="Index"
                    asp-route-sortOrder="@ViewData["NameSortParm"]"
                    asp-route-searchString="@currentSearch"
-                   asp-route-countryFilter="@currentCountry" class="btn btn-mute mt-0" style="width: 100%;">
+                   asp-route-genreFilter="@currentGenre" class="btn btn-mute mt-0" style="width: 100%;">
                     Name
                 </a>
                 <a asp-action="Index"
-                   asp-route-sortOrder="@ViewData["CountrySortParm"]"
+                   asp-route-sortOrder="@ViewData["GenreSortParm"]"
                    asp-route-searchString="@currentSearch"
-                   asp-route-countryFilter="@currentCountry" class="btn btn-mute mt-2" style="width: 100%;">
+                   asp-route-genreFilter="@currentGenre" class="btn btn-mute mt-2" style="width: 100%;">
                     Genre
                 </a>
             </div>
@@ -62,7 +62,7 @@
                             <a asp-action="Index"
                                asp-route-sortOrder="@ViewData["NameSortParm"]"
                                asp-route-searchString="@currentSearch"
-                               asp-route-countryFilter="@currentCountry" class="text-link-mute" style="text-decoration: none;">
+                               asp-route-genreFilter="@currentGenre" class="text-link-mute" style="text-decoration: none;">
                                 ARTIST
                             </a>
                         </th>

@@ -101,7 +101,7 @@ namespace MusicPlaylistOrganizer.Controllers
                     var artist = await _artistRepo.GetOrCreateByNameAsync(
                         name,
                         artworkUrl: model.ArtworkUrl,
-                        country: null
+                        genre: null
                     );
 
                     artistsForThisTrack.Add(artist);
@@ -112,7 +112,7 @@ namespace MusicPlaylistOrganizer.Controllers
                                 ?? await _artistRepo.GetOrCreateFromApiAsync(
                                        apiSourceId: model.ArtistApiId,
                                        name: artistNameRaw,
-                                       country: null
+                                       genre: null
                                    );
             }
             else
