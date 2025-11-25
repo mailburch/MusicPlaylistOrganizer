@@ -54,78 +54,79 @@
             </div>
         </div>
         <div class="col-md-8 mt-md-0 mt-2">
-
-
-            <h3 class="text-mute">Tracks by this Artist</h3>
+        </div>
+    </div>
+</div>
+<h3 class="text-mute">Tracks by this Artist</h3>
 
 @if (Model.Tracks == null || !Model.Tracks.Any())
 {
-                <p>No tracks found for this artist.</p>
+    <p>No tracks found for this artist.</p>
 }
 else
 {
-                <table class="table-mpo">
-                    <thead>
-                        <tr>
-                            <th class="text-mute">TRACK</th>
-                            <th class="text-mute">DURATION</th>
-                            <th class="text-mute">ACTIONS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var track in Model.Tracks)
-                        {
-                            var duration = TimeSpan.FromSeconds(track.DurationSeconds);
-                            <tr class="track-row">
-                                <td style="padding-right: 1%;">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
+    <table class="table-mpo">
+        <thead>
+            <tr>
+                <th class="text-mute">TRACK</th>
+                <th class="text-mute">DURATION</th>
+                <th class="text-mute">ACTIONS</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var track in Model.Tracks)
+            {
+                var duration = TimeSpan.FromSeconds(track.DurationSeconds);
+                <tr class="track-row">
+                    <td style="padding-right: 1%;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
 
-                                        @{
-                                            var artworkUrl = string.IsNullOrEmpty(track.ArtworkUrl) ? "/Images/NoArtwork.jpg" : track.ArtworkUrl;
-                                            var artworkStyle = "width:50px; height:50px; object-fit:cover; border-radius:8px; margin: 2% 0;";
-                                        }
-                                        <img src="@artworkUrl"
-                                             alt="Artwork for @track.Title"
-                                             style="@artworkStyle" />
+                            @{
+                                var artworkUrl = string.IsNullOrEmpty(track.ArtworkUrl) ? "/Images/NoArtwork.jpg" : track.ArtworkUrl;
+                                var artworkStyle = "width:50px; height:50px; object-fit:cover; border-radius:8px; margin: 2% 0;";
+                            }
+                            <img src="@artworkUrl"
+                                 alt="Artwork for @track.Title"
+                                 style="@artworkStyle" />
 
-                                        <div style="display: flex; flex-direction: column; justify-content: center;">
-                                            <div style="line-height: 1.2;">
-                                                <strong>@track.Title</strong>
-                                            </div>
+                            <div style="display: flex; flex-direction: column; justify-content: center;">
+                                <div style="line-height: 1.2;">
+                                    <strong>@track.Title</strong>
+                                </div>
 
-                                            <div class="text-mute" style="line-height: 1.2;">
-                                                @(track.Artist?.Name ?? "Unknown")
-                                            </div>
-                                        </div>
+                                <div class="text-mute" style="line-height: 1.2;">
+                                    @(track.Artist?.Name ?? "Unknown")
+                                </div>
+                            </div>
 
-                                    </div>
-                                </td>
-                                <td class="text-mute">@duration.Minutes:@duration.Seconds.ToString("D2")</td>
-                                <td>
-                                    <a asp-controller="Tracks"
-                                       asp-action="Details"
-                                       class="btn btn-other m-1 ms-0"
-                                       asp-route-id="@track.TrackID">
-                                        Details
-                                    </a>
-                                    <a asp-controller="Tracks"
-                                       asp-action="Edit"
-                                       class="btn btn-other m-1 ms-0"
-                                       asp-route-id="@track.TrackID">
-                                        Edit
-                                    </a>
-                                    <a asp-controller="Tracks"
-                                       asp-action="Delete"
-                                       asp-route-artistId="@Model.ArtistID"
-                                       class="btn btn-delete m-1 ms-0"
-                                       asp-route-id="@track.TrackID">
-                                        Delete
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                        </div>
+                    </td>
+                    <td class="text-mute">@duration.Minutes:@duration.Seconds.ToString("D2")</td>
+                    <td>
+                        <a asp-controller="Tracks"
+                           asp-action="Details"
+                           class="btn btn-other m-1 ms-0"
+                           asp-route-id="@track.TrackID">
+                            Details
+                        </a>
+                        <a asp-controller="Tracks"
+                           asp-action="Edit"
+                           class="btn btn-other m-1 ms-0"
+                           asp-route-id="@track.TrackID">
+                            Edit
+                        </a>
+                        <a asp-controller="Tracks"
+                           asp-action="Delete"
+                           asp-route-artistId="@Model.ArtistID"
+                           class="btn btn-delete m-1 ms-0"
+                           asp-route-id="@track.TrackID">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 

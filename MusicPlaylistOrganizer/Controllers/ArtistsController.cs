@@ -20,6 +20,7 @@ namespace MusicPlaylistOrganizer.Controllers
             // sort route values for column headers
             ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["GenreSortParm"] = sortOrder == "genre" ? "genre_desc" : "genre";
+            ViewData["CountSortParm"] = sortOrder == "tracks" ? "tracks_desc" : "tracks";
 
             // keep filters/search in ViewData so UI keeps values
             ViewData["CurrentFilter"] = searchString;
@@ -58,6 +59,18 @@ namespace MusicPlaylistOrganizer.Controllers
 
                 "genre_desc" => artists
                     .OrderByDescending(a => a.Genre ?? "")
+                    .ThenBy(a => a.Name)
+                    .ToList(),
+
+                // Sort by number of tracks (ascending)
+                "tracks" => artists
+                    .OrderBy(a => a.Tracks?.Count ?? 0)
+                    .ThenBy(a => a.Name)
+                    .ToList(),
+
+                // Sort by number of tracks (descending)
+                "tracks_desc" => artists
+                    .OrderByDescending(a => a.Tracks?.Count ?? 0)
                     .ThenBy(a => a.Name)
                     .ToList(),
 
