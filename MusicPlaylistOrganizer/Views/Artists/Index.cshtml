@@ -3,8 +3,9 @@
 @{
     ViewData["Title"] = "Artists";
     var currentSearch = ViewData["CurrentFilter"] as string;
-    var currentCountry = ViewData["CurrentCountryFilter"] as string;
-    var countries = ViewBag.CountryOptions as List<string> ?? new List<string>();
+    var currentGenre = ViewData["CurrentGenreFilter"] as string;
+    var trackFilter = (ViewData["CurrentTrackFilter"] as string) ?? "all";
+    var genre = ViewBag.GenreOptions as List<string> ?? new List<string>();
 }
 <h1>Artists</h1>
 <div class="container-md">
@@ -21,12 +22,12 @@
                            placeholder="Search by name..."
                            style="max-width:260px; display:inline-block;" />
 
-                    <select name="countryFilter" class="form-control formField" style="max-width:220px; display:inline-block; margin-top:.5rem;">
+                    <select name="GenreFilter" class="form-control formField" style="max-width:220px; display:inline-block; margin-top:.5rem;">
                         <option value="ALL">Genre</option>
-                        @foreach (var c in countries)
+                        @foreach (var g in genre)
                         {
-                            <option value="@c" selected="@(currentCountry == c)">
-                                @c
+                            <option value="@g" selected="@(currentGenre == g)">
+                                @g
                             </option>
                         }
                     </select>
@@ -38,14 +39,23 @@
                 <a asp-action="Index"
                    asp-route-sortOrder="@ViewData["NameSortParm"]"
                    asp-route-searchString="@currentSearch"
-                   asp-route-countryFilter="@currentCountry" class="btn btn-mute mt-0" style="width: 100%;">
+                   asp-route-genreFilter="@currentGenre" class="btn btn-mute mt-0" style="width: 100%;">
                     Name
                 </a>
                 <a asp-action="Index"
-                   asp-route-sortOrder="@ViewData["CountrySortParm"]"
+                   asp-route-sortOrder="@ViewData["GenreSortParm"]"
                    asp-route-searchString="@currentSearch"
-                   asp-route-countryFilter="@currentCountry" class="btn btn-mute mt-2" style="width: 100%;">
+                   asp-route-genreFilter="@currentGenre" class="btn btn-mute mt-2" style="width: 100%;">
                     Genre
+                </a>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CountSortParm"]"
+                   asp-route-searchString="@currentSearch"
+                   asp-route-trackFilter="@trackFilter"
+                   class="btn btn-mute mt-2"
+                   style="width: 100%;"
+                   style="text-decoration:none;">
+                    Track Count
                 </a>
             </div>
         </div>
@@ -62,7 +72,7 @@
                             <a asp-action="Index"
                                asp-route-sortOrder="@ViewData["NameSortParm"]"
                                asp-route-searchString="@currentSearch"
-                               asp-route-countryFilter="@currentCountry" class="text-link-mute" style="text-decoration: none;">
+                               asp-route-genreFilter="@currentGenre" class="text-link-mute" style="text-decoration: none;">
                                 ARTIST
                             </a>
                         </th>

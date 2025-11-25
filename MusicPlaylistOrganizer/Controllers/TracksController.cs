@@ -164,20 +164,27 @@ namespace MusicPlaylistOrganizer.Controllers
 
         // GET: /Tracks/Delete/5
         [HttpGet]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, int? artistId)
         {
             var track = await _trackRepo.GetByIdAsync(id);
-            if (track == null) return NotFound();
+            if (track == null)
+                return NotFound();
+
+            ViewBag.ArtistId = artistId; // pass it to the view
             return View(track);
         }
 
         // POST: /Tracks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, int? artistId)
         {
             await _trackRepo.DeleteAsync(id);
-            return RedirectToAction(nameof(Index));
+
+            if (artistId.HasValue)
+                return RedirectToAction("Details", "Artists", new { id = artistId.Value });
+
+            return RedirectToAction("Index"); // fallback
         }
     }
 }

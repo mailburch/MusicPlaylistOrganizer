@@ -12,14 +12,15 @@
             <div>
                 <h2 class="text-danger">Delete Playlist?</h2>
 
-<p class="text-mute m-0">This will remove the <strong class="text-danger">@Model.Name</strong> playlist, but keep all tracks in your library.</p>
-<p class="text-mute">Are you sure?</p>
+                <p class="text-mute m-0">This will remove the <strong class="text-danger">@Model.Name</strong> playlist, but keep all tracks in your library.</p>
+                <p class="text-mute">Are you sure?</p>
 
-<div>
-        <p class="text-mute">Tracks in this playlist:
+                <div>
+                    <p class="text-mute">
+                        Tracks in this playlist:
                         <strong class="text-light">@(Model.PlaylistTracks?.Count ?? 0)</strong>
                     </p>
-</div>
+                </div>
 
 <form asp-action="Delete" method="post" style="margin-top:15px;">
     @Html.AntiForgeryToken()
@@ -27,3 +28,7 @@
     <button type="submit" class="btn btn-delete mt-5 me-5 ps-5 pe-5" style="border-radius: 2rem;">Delete Playlist</button>
     <a asp-action="Index" class="btn btn-other mt-5 me-5 ps-5 pe-5" style="border-radius: 2rem;">Cancel</a>
 </form>
+            </div>
+        </div>
+    </div>
+</div>
