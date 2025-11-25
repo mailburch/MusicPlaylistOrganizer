@@ -5,79 +5,92 @@
     var allTracks = ViewBag.AllTracks as IEnumerable<MusicPlaylistOrganizer.Models.Track>;
 }
 
-<h1>Edit Playlist: @Model.Name</h1>
+<h1>Edit @Model.Name Tracks</h1>
+<div class="container-md">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="bg-blue p-4" style="border-radius: 1rem; height: 100%;">
+                <h5>Add Track from Online Catalog</h5>
 
-<!-- Playlist info form -->
-<form asp-action="Edit" method="post">
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="PlaylistID" />
+                <div>
+                    <input type="text" 
+                        id="catalogQuery" 
+                        class="form-control formField" 
+                        placeholder="Search for a song..." 
+                        style="max-width: 500px; display: inline-block;"/>
+                    <button type="button" class="btn btn-other mt-2 mb-2" id="catalogSearchBtn">Search</button>
+                </div>
 
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+                <div id="catalogResults"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="bg-blue p-4" style="border-radius: 1rem; height: 100%">
+                <h5>Tracks in this Playlist</h5>
+                <p class="text-mute">Drag to reorder</p>
+
+                <ul id="playlist-tracks" style="padding-left: 0px;">
+                    @if (Model.PlaylistTracks == null || !Model.PlaylistTracks.Any())
+                    {
+                        <li>No tracks in this playlist yet.</li>
+                    }
+                    else
+                    {
+                        @foreach (var pt in Model.PlaylistTracks.OrderBy(pt => pt.Position))
+                        {
+                            <li class="playlist-item"
+                                draggable="true"
+                                data-track-id="@pt.TrackID"
+                                style="display:flex; align-items:center; gap:10px; margin-bottom:8px; cursor:grab; background-color: #23274A; padding: 2%; border-radius: 10px;">
+                                <span class="track-text">
+                                    ≡</span>
+
+                                @* Artwork thumbnail, if available *@
+                                @if (!string.IsNullOrEmpty(pt.Track?.ArtworkUrl))
+                                {
+                                    <img src="@pt.Track.ArtworkUrl"
+                                         alt="Cover for @pt.Track.Title"
+                                         style="width:50px; height:50px; object-fit:cover; border-radius:4px;" />
+                                }
+                                else
+                                {
+                                    <img src="~/Images/NoArtwork.jpg"
+                                         alt="Cover Art Missing"
+                                         style="width:75px; height:75px; object-fit:cover; border-radius:4px;" />
+                                }
+
+                                <span class="track-text">
+                                    @pt.Position. @pt.Track.Title (@pt.Track.Artist.Name)
+                                </span>
+
+                                <!-- Remove track from playlist -->
+                                <form asp-action="RemoveTrack" method="post" style="display:inline; margin-left:auto;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="playlistId" value="@Model.PlaylistID" />
+                                    <input type="hidden" name="trackId" value="@pt.TrackID" />
+                                    <button type="submit"
+                                            class="btn btn-delete ps-4 pe-4"
+                                            style="border-radius: 2rem;">
+                                        Remove
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                    }
+                </ul>
+                <div class="mt-4">
+                <button type="button" id="saveOrderBtn" class="btn btn-blue">
+                    Save Track Order
+                </button>
+                <a asp-action="Index" class="btn btn-mute">Return</a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="form-group" style="margin-top:10px;">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-
-    <div style="margin-top:15px;">
-        <button type="submit" class="btn btn-primary">Save Playlist Info</button>
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-    </div>
-</form>
-
-<hr />
-
-<h2>Tracks in this Playlist</h2>
-
-<ul id="playlist-tracks">
-    @if (Model.PlaylistTracks == null || !Model.PlaylistTracks.Any())
-    {
-        <li>No tracks in this playlist yet.</li>
-    }
-    else
-    {
-        @foreach (var pt in Model.PlaylistTracks.OrderBy(pt => pt.Position))
-        {
-            <li class="playlist-item"
-                draggable="true"
-                data-track-id="@pt.TrackID"
-                style="display:flex; align-items:center; gap:10px; margin-bottom:8px; cursor:grab;">
-
-                @* Artwork thumbnail, if available *@
-                @if (!string.IsNullOrEmpty(pt.Track?.ArtworkUrl))
-                {
-                    <img src="@pt.Track.ArtworkUrl"
-                         alt="Cover for @pt.Track.Title"
-                         style="width:75px; height:75px; object-fit:cover; border-radius:4px;" />
-                }
-
-                <span class="track-text">
-                    @pt.Position. @pt.Track.Title (@pt.Track.Artist.Name)
-                </span>
-
-                <!-- Remove track from playlist -->
-                <form asp-action="RemoveTrack" method="post" style="display:inline; margin-left:auto;">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="playlistId" value="@Model.PlaylistID" />
-                    <input type="hidden" name="trackId" value="@pt.TrackID" />
-                    <button type="submit" class="btn btn-link text-danger remove-btn">Remove</button>
-                </form>
-            </li>
-        }
-    }
-</ul>
-
-<button type="button" id="saveOrderBtn" class="btn btn-secondary" style="margin-top:10px;">
-    Save Track Order
-</button>
-
-<hr />
-
+<div class="row">
+    <div class="col-12 mt-4">
+        <div class="bg-blue p-4" style="border-radius: 1rem; height: 100%;">
 <h2>Add Existing Track</h2>
 
 @if (allTracks != null && allTracks.Any())
@@ -88,7 +101,7 @@
 
         <div class="form-group">
             <label for="trackId">Select a track:</label>
-            <select name="trackId" id="trackId" class="form-control">
+            <select name="trackId" id="trackId" class="form-control formField">
                 @foreach (var t in allTracks.OrderBy(t => t.Title))
                 {
                     <option value="@t.TrackID">
@@ -99,7 +112,7 @@
         </div>
 
         <div style="margin-top:10px;">
-            <button type="submit" class="btn btn-success">Add Track</button>
+            <button type="submit" class="btn btn-other">Add Track</button>
         </div>
     </form>
 }
@@ -107,17 +120,13 @@ else
 {
     <p>No tracks exist yet. Create some tracks first.</p>
 }
+            </div>
+        </div>
 
-<hr />
-
-<h2>Add Track from Online Catalog</h2>
-
-<div>
-    <input type="text" id="catalogQuery" placeholder="Search for a song..." />
-    <button type="button" id="catalogSearchBtn">Search</button>
+    </div>
 </div>
 
-<div id="catalogResults"></div>
+
 
 @section Scripts {
     <script>
@@ -217,6 +226,9 @@ else
 
                     data.forEach(item => {
                         const li = document.createElement('li');
+                        li.style.backgroundColor = "#23274a";
+                        li.style.padding = "2%";
+                        li.style.borderRadius = "10px";
                         li.style.display = "flex";
                         li.style.alignItems = "center";
                         li.style.gap = "10px";
@@ -225,8 +237,8 @@ else
                         const img = document.createElement('img');
                         img.src = item.artworkUrl100;
                         img.alt = item.trackName;
-                        img.style.width = "60px";
-                        img.style.height = "60px";
+                        img.style.width = "50px";
+                        img.style.height = "50px";
                         img.style.objectFit = "cover";
                         img.style.borderRadius = "4px";
 
@@ -234,7 +246,8 @@ else
                         text.textContent = item.trackName + " — " + item.artistName;
 
                         const btn = document.createElement('button');
-                        btn.textContent = "Add to playlist";
+                        btn.textContent = "Add";
+                        btn.className = "btn btn-sm btn-mute ps-3 pe-3"
                         btn.style.marginLeft = "auto";
                         btn.addEventListener('click', function () {
                             importTrackToPlaylist(item);

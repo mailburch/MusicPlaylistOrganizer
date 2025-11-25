@@ -6,54 +6,111 @@
 }
 
 <h1>Track Details</h1>
+<div class="container-md">
+    <div class="row">
+        <div class="col-md-4 bg-blue p-4" style="border-radius: 1rem;">
 
-<div style="display:flex; gap:15px; align-items:flex-start; margin-bottom:20px;">
-    @if (!string.IsNullOrEmpty(Model.ArtworkUrl))
-    {
-        <img src="@Model.ArtworkUrl"
-             alt="Artwork for @Model.Title"
-             style="width:150px; height:150px; object-fit:cover; border-radius:8px;" />
-    }
+            <div style="display: flex; flex-direction: column; align-items:center; padding-right: 1%;">
+                @if (!string.IsNullOrEmpty(Model.ArtworkUrl))
+                {
+                    <img src="@Model.ArtworkUrl"
+                         alt="Artwork for @Model.Title"
+                    style="width:200px; height:200px; object-fit:cover; border-radius:8px;" />
+                }
+                else
+                {
+                    <img src="~/Images/NoArtwork.jpg"
+                         alt="Artwork missing for @Model.Title"
+                         style="width:200px; height:200px; object-fit:cover; border-radius:8px;" />
+                }
+                <div style="width: 100%; text-align: left;">
+                    <h2>@Model.Title</h2>
 
-    <div>
-        <h2>@Model.Title</h2>
+                    <p class="text-mute mb-0">
+                        by
+                        @(Model.Artist?.Name ?? "Unknown")
+                    </p>
 
-        <p>
-            <strong>Artist:</strong>
-            @(Model.Artist?.Name ?? "Unknown")
-        </p>
+                    @if (!string.IsNullOrEmpty(Model.ApiSourceId))
+                    {
+                        <p class="text-mute">@duration.Minutes:@duration.Seconds.ToString("D2") • Imported From iTunes Library</p>
+                    }
+                    else
+                    {
+                        <p>
+                            @duration.Minutes:@duration.Seconds.ToString("D2")
+                        </p>
+                    }
+                </div>
+                <div style="margin-top:15px; display:flex; gap:10px;">
 
-        <p>
-            <strong>Duration:</strong>
-            @duration.Minutes:@duration.Seconds.ToString("D2")
-        </p>
+                    <a asp-action="Edit"
+                       asp-route-id="@Model.TrackID"
+                       class="btn btn-other ps-4 pe-4"
+                       style="border-radius: 2rem;">
+                        Edit
+                    </a>
 
-        @if (!string.IsNullOrEmpty(Model.ApiSourceId))
-        {
-            <p><strong>API Source ID:</strong> @Model.ApiSourceId</p>
-        }
+                    <a asp-action="Delete"
+                       asp-route-id="@Model.TrackID"
+                       class="btn btn-delete ps-4 pe-4"
+                       style="border-radius: 2rem;">
+                        Delete
+                    </a>
+
+
+                    <a asp-action="Index"
+                       class="btn btn-other ps-4 pe-4"
+                       style="border-radius: 2rem;">
+                        Back
+                    </a>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8 mt-md-0 mt-2">
+
+            <div class="bg-blue ps-3 pe-3 p-1" style="border-radius: 1rem;">
+            <h3 class="text-mute">Playlists containing this track</h3>
+
+            @if (Model.PlaylistTracks == null || !Model.PlaylistTracks.Any())
+            {
+                <p>This track is not currently in any playlists.</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var pt in Model.PlaylistTracks)
+                    {
+                        <li>@pt.Playlist.Name (Song #@pt.Position)</li>
+                    }
+                </ul>
+            }
+            </div>
+            <br/>
+            <h4 class="text-mute" style="margin-top: 20px;">Add this track to a playlist</h4>
+            <form asp-controller="Playlists" asp-action="AddTrack" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="trackId" value="@Model.TrackID" />
+
+                <div class="form-group">
+                    <label for="playlistId">Select a playlist:</label>
+                    <select name="playlistId" id="playlistId" class="form-control formField">
+                        @if (ViewBag.Playlists != null)
+                        {
+                            foreach (var playlist in ViewBag.Playlists)
+                            {
+                                <option value="@playlist.PlaylistID">@playlist.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div style="margin-top:10px;">
+                    <button type="submit" class="btn btn-blue">Add to Playlist</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
-<hr />
-
-<h3>Playlists containing this track</h3>
-
-@if (Model.PlaylistTracks == null || !Model.PlaylistTracks.Any())
-{
-    <p>This track is not currently in any playlists.</p>
-}
-else
-{
-    <ul>
-        @foreach (var pt in Model.PlaylistTracks)
-        {
-            <li>@pt.Playlist.Name (Position @pt.Position)</li>
-        }
-    </ul>
-}
-
-<div style="margin-top:15px;">
-    <a asp-action="Edit" asp-route-id="@Model.TrackID" class="btn btn-primary">Edit</a>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>

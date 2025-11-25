@@ -9,25 +9,34 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MusicPlaylistOrganizer.styles.css" asp-append-version="true" />
 </head>
-<body class="bg-dark text-light">
+<body class="bg-drk-blue text-light">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-dark-subtle border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm bg-blue box-shadow mb-3 container-fluid">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Music Playlist<br />Organizer</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/Images/MPO_Logo.png" style="height: 50px;" /></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                    <span class="navbar-toggler-icon navbar-dark"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-link-mute" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Contact">Contact Us</a>
+                            <a class="nav-link text-link-mute" asp-area="" asp-controller="Artists" asp-action="Index">Artists</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-link-mute" asp-area="" asp-controller="Tracks" asp-action="Index">Tracks</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-link-mute" asp-area="" asp-controller="Playlists" asp-action="Index">Playlists</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-link-mute" asp-area="" asp-controller="Home" asp-action="Contact">Contact Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-link-mute" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
                 </div>
@@ -40,7 +49,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-mute">
         <div class="container">
             &copy; 2025 - MusicPlaylistOrganizer - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>

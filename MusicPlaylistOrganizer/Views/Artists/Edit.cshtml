@@ -5,64 +5,85 @@
 }
 
 <h1>Edit Artist</h1>
+<div class="container-md">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
 
-<form asp-action="Edit" method="post">
-    @Html.AntiForgeryToken()
+            <div class="bg-blue p-4" style="border-radius: 1rem; height: 100%;">
 
-    <input type="hidden" asp-for="ArtistID" />
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="ArtistID" />
 
-    <div style="display:flex; gap:15px; align-items:flex-start; margin-bottom:15px;">
-        @if (!string.IsNullOrEmpty(Model.ArtworkUrl))
-        {
-            <img src="@Model.ArtworkUrl"
-                 alt="Artwork for @Model.Name"
-                 style="width:120px; height:120px; object-fit:cover; border-radius:8px;" />
-        }
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        <div style="flex:1;">
-            <div class="form-group">
-                <label asp-for="Name"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                    <div style="display:flex; gap:15px; align-items:flex-start; margin-bottom:15px;">
+                        @if (!string.IsNullOrEmpty(Model.ArtworkUrl))
+                        {
+                            <div style="display: flex; flex-direction: column; align-items: flex-start; padding-right: 1%;">
+                                <p class="text-mute m-0">Artist Artwork</p>
+                                <img src="@Model.ArtworkUrl"
+                                     alt="Artwork for @Model.Name"
+                                     style="width:120px; height:120px; object-fit:cover; border-radius:8px;" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div style="display: flex; flex-direction: column; align-items:flex-start; padding-right: 1%;">
+                                <p class="text-mute m-0">Artwork Preview</p>
+                                <img src="~/Images/NoArtist.jpg"
+                                     alt="Artwork missing for @Model.Name"
+                                     style="width:120px; height:120px; object-fit:cover; border-radius:8px;" />
+                            </div>
+                        }
+
+                        <div style="flex:1;">
+                            <div class="form-group">
+                                <label asp-for="Name"></label>
+                                <input asp-for="Name" class="form-control formField" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group" style="margin-top:10px;">
+                                <label asp-for="Genre"></label>
+                                <input asp-for="Genre" class="form-control formField" />
+                                <span asp-validation-for="Genre" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group" style="margin-top:10px;">
+                                <label asp-for="ArtworkUrl">Artwork URL</label>
+                                <input asp-for="ArtworkUrl" class="form-control formField" />
+                                <span asp-validation-for="ArtworkUrl" class="text-danger"></span>
+                            </div>
+
+                            <input asp-for="ApiSourceId" type="hidden" />
+                        </div>
+                    </div>
+
+                    <div style="margin-top:10px;">
+                        <button type="submit" class="btn btn-blue">Save</button>
+                        <a asp-action="Index" class="btn btn-mute">Cancel</a>
+                    </div>
+                </form>
+
+                <hr />
+
+                <h2>Search Artist from Online Catalog</h2>
+
+                <p class="text-mute">You can search the external catalog and update this artist's info.</p>
+
+                <div>
+                    <input type="text" id="artistQuery" placeholder="Search for an artist..." class="form-control formField" value="@Model.Name" />
+                    <button type="button" id="artistSearchBtn" class="btn btn-blue mt-3">Search</button>
+                </div>
+
+                <div id="artistSearchResults" class="text-mute" style="margin-top:15px;"></div>
             </div>
-
-            <div class="form-group" style="margin-top:10px;">
-                <label asp-for="Country"></label>
-                <input asp-for="Country" class="form-control" />
-                <span asp-validation-for="Country" class="text-danger"></span>
-            </div>
-
-            <div class="form-group" style="margin-top:10px;">
-                <label asp-for="ArtworkUrl">Artwork URL</label>
-                <input asp-for="ArtworkUrl" class="form-control" />
-                <span asp-validation-for="ArtworkUrl" class="text-danger"></span>
-            </div>
-
-            <input asp-for="ApiSourceId" type="hidden" />
         </div>
     </div>
-
-    <div style="margin-top:10px;">
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-    </div>
-</form>
-
-<hr />
-
-<h2>Search Artist from Online Catalog</h2>
-
-<p>You can search the external catalog and update this artist's info.</p>
-
-<div>
-    <input type="text" id="artistQuery" placeholder="Search for an artist..." />
-    <button type="button" id="artistSearchBtn">Search</button>
 </div>
-
-<div id="artistSearchResults" style="margin-top:15px;"></div>
-
 @section Scripts {
     <script>
         document.getElementById('artistSearchBtn').addEventListener('click', function () {
@@ -86,6 +107,9 @@
 
                     data.forEach(item => {
                         const li = document.createElement('li');
+                        li.style.backgroundColor = "#23274a";
+                        li.style.padding = "2%";
+                        li.style.borderRadius = "10px";
                         li.style.display = "flex";
                         li.style.alignItems = "center";
                         li.style.gap = "10px";
@@ -105,22 +129,23 @@
                         const text = document.createElement('span');
                         let label = item.artistName;
                         if (item.primaryGenreName) {
-                            label += " (" + item.primaryGenreName + ")";
+                        label += " — " + item.primaryGenreName;
                         }
                         text.textContent = label;
 
                         const btn = document.createElement('button');
                         btn.textContent = "Apply to Artist";
+                        btn.className = "btn btn-sm btn-mute";
                         btn.style.marginLeft = "auto";
                         btn.addEventListener('click', function () {
                             const nameInput = document.getElementById('Name');
-                            const countryInput = document.getElementById('Country');
+                            const genreInput = document.getElementById('Genre');
                             const artworkInput = document.getElementById('ArtworkUrl');
                             const apiSourceInput = document.getElementById('ApiSourceId');
 
                             if (nameInput) nameInput.value = item.artistName || "";
-                            if (countryInput && item.primaryGenreName) {
-                                countryInput.value = item.primaryGenreName;
+                            if (genreInput && item.primaryGenreName) {
+                                genreInput.value = item.primaryGenreName;
                             }
                             if (artworkInput && item.artworkUrl100) {
                                 artworkInput.value = item.artworkUrl100;

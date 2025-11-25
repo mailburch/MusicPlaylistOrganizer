@@ -7,7 +7,7 @@
         public int DurationSeconds { get; set; }
 
         public int ArtistID { get; set; }
-        public Artist Artist { get; set; } = null!;
+        public Artist? Artist { get; set; } = null!;
 
         public string? ApiSourceId { get; set; }
         public string? ArtworkUrl { get; set; }

@@ -34,12 +34,18 @@ namespace MusicPlaylistOrganizer.Repositories
                 .FirstOrDefaultAsync(a => a.ApiSourceId == apiSourceId);
         }
 
-        // 🔹 SMART CREATE OR RETURN EXISTING FROM API
-        // 1) Try by ApiSourceId
-        // 2) If not found, try by Name (case-insensitive)
-        // 3) If found by name, attach ApiSourceId if missing
-        // 4) Else create new
-        public async Task<Artist> GetOrCreateFromApiAsync(string apiSourceId, string name, string? country = null)
+        /// <summary>
+        /// Smart create or return existing artist from API:
+        /// 1) Try by ApiSourceId
+        /// 2) If not found, try by Name (case-insensitive)
+        /// 3) If found by name, attach ApiSourceId / Genre / Artwork if missing
+        /// 4) Else create new artist with Name + Genre + ArtworkUrl
+        /// </summary>
+        public async Task<Artist> GetOrCreateFromApiAsync(
+            string apiSourceId,
+            string name,
+            string? genre = null,
+            string? artworkUrl = null)
         {
             var trimmedName = name?.Trim() ?? string.Empty;
 
@@ -48,7 +54,26 @@ namespace MusicPlaylistOrganizer.Repositories
             {
                 var byApi = await GetByApiSourceIdAsync(apiSourceId);
                 if (byApi != null)
+                {
+                    bool changed = false;
+
+                    if (string.IsNullOrEmpty(byApi.Genre) && !string.IsNullOrEmpty(genre))
+                    {
+                        byApi.Genre = genre;
+                        changed = true;
+                    }
+
+                    if (string.IsNullOrEmpty(byApi.ArtworkUrl) && !string.IsNullOrEmpty(artworkUrl))
+                    {
+                        byApi.ArtworkUrl = artworkUrl;
+                        changed = true;
+                    }
+
+                    if (changed)
+                        await _context.SaveChangesAsync();
+
                     return byApi;
+                }
             }
 
             // 2) Try by name
@@ -60,18 +85,31 @@ namespace MusicPlaylistOrganizer.Repositories
 
             if (byName != null)
             {
+                bool changed = false;
+
                 // 3) Attach ApiSourceId if we now know it and it's not set yet
                 if (!string.IsNullOrWhiteSpace(apiSourceId) && string.IsNullOrEmpty(byName.ApiSourceId))
                 {
                     byName.ApiSourceId = apiSourceId;
-                    // Optionally update country if we didn't have one
-                    if (string.IsNullOrEmpty(byName.Country) && !string.IsNullOrEmpty(country))
-                    {
-                        byName.Country = country;
-                    }
-
-                    await _context.SaveChangesAsync();
+                    changed = true;
                 }
+
+                // Update genre if we didn't have one
+                if (string.IsNullOrEmpty(byName.Genre) && !string.IsNullOrEmpty(genre))
+                {
+                    byName.Genre = genre;
+                    changed = true;
+                }
+
+                // Update artwork if missing
+                if (string.IsNullOrEmpty(byName.ArtworkUrl) && !string.IsNullOrEmpty(artworkUrl))
+                {
+                    byName.ArtworkUrl = artworkUrl;
+                    changed = true;
+                }
+
+                if (changed)
+                    await _context.SaveChangesAsync();
 
                 return byName;
             }
@@ -80,9 +118,9 @@ namespace MusicPlaylistOrganizer.Repositories
             var artist = new Artist
             {
                 Name = trimmedName,
-                Country = country,
-                ApiSourceId = apiSourceId
-                // ArtworkUrl intentionally NOT set here (track import handles it)
+                Genre = genre,
+                ApiSourceId = apiSourceId,
+                ArtworkUrl = artworkUrl
             };
 
             _context.Artists.Add(artist);
@@ -115,7 +153,7 @@ namespace MusicPlaylistOrganizer.Repositories
             }
         }
 
-        // 🔹 LOOKUP BY NAME (case-insensitive)
+        // LOOKUP BY NAME (case-insensitive)
         public async Task<Artist?> GetByNameAsync(string name)
         {
             var normalized = name.Trim().ToLower();
@@ -123,26 +161,37 @@ namespace MusicPlaylistOrganizer.Repositories
                 .FirstOrDefaultAsync(a => a.Name.ToLower() == normalized);
         }
 
-        // 🔹 GET OR CREATE BY NAME (used for multi-artist split)
-        public async Task<Artist> GetOrCreateByNameAsync(string name, string? artworkUrl = null, string? country = null)
+        /// <summary>
+        /// Used for split multi-artist strings ("Me & You").
+        /// If artist exists by name, optionally fills in missing Genre / ArtworkUrl.
+        /// Otherwise creates a new artist with those fields.
+        /// </summary>
+        public async Task<Artist> GetOrCreateByNameAsync(
+            string name,
+            string? artworkUrl = null,
+            string? genre = null)
         {
             var trimmedName = name.Trim();
             var existing = await GetByNameAsync(trimmedName);
+
             if (existing != null)
             {
-                // If we didn’t have artwork yet and now we do, update it
+                bool changed = false;
+
                 if (string.IsNullOrEmpty(existing.ArtworkUrl) && !string.IsNullOrEmpty(artworkUrl))
                 {
                     existing.ArtworkUrl = artworkUrl;
-                    await _context.SaveChangesAsync();
+                    changed = true;
                 }
 
-                // Also optionally update country if missing
-                if (string.IsNullOrEmpty(existing.Country) && !string.IsNullOrEmpty(country))
+                if (string.IsNullOrEmpty(existing.Genre) && !string.IsNullOrEmpty(genre))
                 {
-                    existing.Country = country;
-                    await _context.SaveChangesAsync();
+                    existing.Genre = genre;
+                    changed = true;
                 }
+
+                if (changed)
+                    await _context.SaveChangesAsync();
 
                 return existing;
             }
@@ -150,7 +199,7 @@ namespace MusicPlaylistOrganizer.Repositories
             var artist = new Artist
             {
                 Name = trimmedName,
-                Country = country,
+                Genre = genre,
                 ArtworkUrl = artworkUrl,
                 ApiSourceId = null // no specific API id for split/name-only artists
             };

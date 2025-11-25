@@ -21,8 +21,8 @@ namespace MusicPlaylistOrganizer.Data
 
             // Seed Artists
             modelBuilder.Entity<Artist>().HasData(
-                new Artist { ArtistID = 1, Name = "Lo-Fi Wizard", Country = "USA" },
-                new Artist { ArtistID = 2, Name = "Neon Nights", Country = "UK" }
+                new Artist { ArtistID = 1, Name = "Lo-Fi Wizard", Genre = "USA" },
+                new Artist { ArtistID = 2, Name = "Neon Nights", Genre = "UK" }
             );
 
             // Seed Tracks

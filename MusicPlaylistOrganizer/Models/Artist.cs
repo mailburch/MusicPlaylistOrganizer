@@ -4,7 +4,7 @@
     {
         public int ArtistID { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string? Country { get; set; }
+        public string? Genre { get; set; }
 
         public string? ApiSourceId { get; set; }
         public string? ArtworkUrl { get; set; }

@@ -1,0 +1,79 @@
+﻿@model MusicPlaylistOrganizer.Models.Playlist
+
+@{
+    ViewData["Title"] = "Edit Playlist";
+    var allTracks = ViewBag.AllTracks as IEnumerable<MusicPlaylistOrganizer.Models.Track>;
+}
+
+<h1>Edit Playlist</h1>
+
+<div class="container-md">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="bg-blue p-4" style="border-radius: 1rem; height: 100%;">
+                <h5>Edit Playlist</h5>
+                <!-- Playlist info form -->
+                <form asp-action="EditPlaylist" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="col-md-8">
+                            <input type="hidden" asp-for="PlaylistID" />
+                            <div class="form-group">
+                                <label asp-for="Name"></label>
+                                <input asp-for="Name" class="form-control formField" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group" style="margin-top:10px;">
+                                <label asp-for="Description"></label>
+                                <textarea asp-for="Description" class="form-control formField"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+
+                            <div style="margin-top:15px;">
+                                <button type="submit" class="btn btn-blue">Save Playlist Info</button>
+                                <a asp-action="Edit"
+                                   asp-route-id="@Model.PlaylistID"
+                                   class="btn btn-other ps-4 pe-4 p-1"
+                                   style="border-radius: 2rem;">
+                                    Edit Tracks
+                                </a>
+                                <a asp-action="Index" class="btn btn-mute">Cancel</a>
+                                
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <p class="text-mute m-0">Cover Artwork</p>
+                            @{
+                                var firstArtwork = Model.PlaylistTracks?
+                                .FirstOrDefault()?
+                                .Track?
+                                .ArtworkUrl;
+                            }
+                            @if (!string.IsNullOrEmpty(firstArtwork))
+                            {
+                                <img src="@firstArtwork"
+                                     alt="@Model.Name Album Art"
+                                     class="img-fluid rounded-3"
+                                     style="width: 150px; height: 150px; object-fit:fill;" />
+                            }
+                            else
+                            {
+                                <img src="~/Images/NoArtwork.jpg"
+                                     alt="@Model.Name Album Art Missing"
+                                     class="img-fluid rounded-3"
+                                     style="width: 150px; height: 150px; object-fit:cover;" />
+
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

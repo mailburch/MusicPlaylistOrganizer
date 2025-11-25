@@ -5,58 +5,80 @@
 }
 
 <h1>Edit Track</h1>
+<div class="container-md">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
 
-<form asp-action="Edit" method="post">
-    @Html.AntiForgeryToken()
+            <div class="bg-blue p-4" style="border-radius: 1rem; height: 100%;">
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
 
-    <input type="hidden" asp-for="TrackID" />
+                    <input type="hidden" asp-for="TrackID" />
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div style="display:flex; gap:15px; align-items:flex-start; margin-bottom:15px;">
-        @if (!string.IsNullOrEmpty(Model.ArtworkUrl))
-        {
-            <img src="@Model.ArtworkUrl"
-                 alt="Artwork for @Model.Title"
-                 style="width:120px; height:120px; object-fit:cover; border-radius:8px;" />
-        }
+                    <div style="display:flex; gap:15px; align-items:flex-start; margin-bottom:15px;">
 
-        <div style="flex:1;">
-            <div class="form-group">
-                <label asp-for="Title"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+                        @if (!string.IsNullOrEmpty(Model.ArtworkUrl))
+                        {
+                            <div style="display: flex; flex-direction: column; align-items:flex-start; padding-right: 1%;">
+                                <p class="text-mute m-0">Artwork Preview</p>
+                                <img src="@Model.ArtworkUrl"
+                                     alt="Artwork for @Model.Title"
+                                     style="width:120px; height:120px; object-fit:cover; border-radius:8px;" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div style="display: flex; flex-direction: column; align-items:flex-start; padding-right: 1%;">
+                                <p class="text-mute m-0">Artwork Preview</p>
+                                <img src="~/Images/NoArtwork.jpg"
+                                     alt="Artwork missing for @Model.Title"
+                                     style="width:120px; height:120px; object-fit:cover; border-radius:8px;" />
+                            </div>
+                        }
+                        <div style="flex:1;">
+                            <div class="form-group">
+                                <label asp-for="Title"></label>
+                                <input asp-for="Title" class="form-control formField" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group" style="margin-top:10px;">
+                                <label asp-for="ArtistID">Artist</label>
+                                <select asp-for="ArtistID" class="form-control formField"
+                                        asp-items="ViewBag.ArtistID"></select>
+                                <span asp-validation-for="ArtistID" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group" style="margin-top:10px;">
+                                <label asp-for="DurationSeconds">Duration (seconds)</label>
+                                <input asp-for="DurationSeconds" class="form-control formField" />
+                                <span asp-validation-for="DurationSeconds" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group" style="margin-top:10px;">
+                                <label asp-for="ArtworkUrl">Artwork URL</label>
+                                <input asp-for="ArtworkUrl" class="form-control formField" />
+                                <span asp-validation-for="ArtworkUrl" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group" style="margin-top:10px;">
+                                <label asp-for="ApiSourceId">API Source ID (optional)</label>
+                                <input asp-for="ApiSourceId" class="form-control formField" />
+                                <span asp-validation-for="ApiSourceId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:10px;">
+                        <button type="submit" class="btn btn-blue" asp-action="Index">Save</button>
+                        <a asp-action="Index" class="btn btn-mute">Cancel</a>
+                    </div>
+                </form>
             </div>
-
-            <div class="form-group" style="margin-top:10px;">
-                <label asp-for="ArtistID">Artist</label>
-                <select asp-for="ArtistID" class="form-control"
-                        asp-items="ViewBag.ArtistID"></select>
-                <span asp-validation-for="ArtistID" class="text-danger"></span>
-            </div>
-
-            <div class="form-group" style="margin-top:10px;">
-                <label asp-for="DurationSeconds">Duration (seconds)</label>
-                <input asp-for="DurationSeconds" class="form-control" />
-                <span asp-validation-for="DurationSeconds" class="text-danger"></span>
-            </div>
-
-            <div class="form-group" style="margin-top:10px;">
-                <label asp-for="ArtworkUrl">Artwork URL</label>
-                <input asp-for="ArtworkUrl" class="form-control" />
-                <span asp-validation-for="ArtworkUrl" class="text-danger"></span>
-            </div>
-
-            <div class="form-group" style="margin-top:10px;">
-                <label asp-for="ApiSourceId">API Source ID (optional)</label>
-                <input asp-for="ApiSourceId" class="form-control" />
-                <span asp-validation-for="ApiSourceId" class="text-danger"></span>
-            </div>
+            <div class="col-md-2"></div>
         </div>
     </div>
-
-    <div style="margin-top:10px;">
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-    </div>
-</form>
+</div>

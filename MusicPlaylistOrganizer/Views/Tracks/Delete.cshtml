@@ -5,43 +5,49 @@
     var duration = TimeSpan.FromSeconds(Model.DurationSeconds);
 }
 
-<h1>Delete Track</h1>
+<h1>Track Delete</h1>
+<div class="container-md">
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6 ps-5 pe-5 p-3 bg-blue" style="border-color: red; border-width: 2px; border-radius: 1rem; border-style: solid;">
+            <div>
+            <h2 class="text-danger">Delete Track?</h2>
+            <div style="display:flex; gap:15px; align-items:flex-start; margin-bottom:20px;">
 
-<div style="display:flex; gap:15px; align-items:flex-start; margin-bottom:20px;">
-    @if (!string.IsNullOrEmpty(Model.ArtworkUrl))
-    {
-        <img src="@Model.ArtworkUrl"
-             alt="Artwork for @Model.Title"
-             style="width:120px; height:120px; object-fit:cover; border-radius:8px;" />
-    }
+                @if (!string.IsNullOrEmpty(Model.ArtworkUrl))
+                {
+                    <img src="@Model.ArtworkUrl"
+                         alt="Artwork for @Model.Title"
+                        style="width:120px; height:120px; object-fit:cover; border-radius:8px;" />
+                    }
+                    else
+                    {
+                        <img src="~/Images/NoArtwork.jpg"
+                             alt="Artwork missing for @Model.Title"
+                             style="width:120px; height:120px; object-fit:cover; border-radius:8px;" />
+                    }
 
-    <div>
-        <h2>@Model.Title</h2>
+                <div>
 
-        <p>
-            <strong>Artist:</strong>
-            @(Model.Artist?.Name ?? "Unknown")
-        </p>
+                    <h3>@Model.Title</h3>
 
-        <p>
-            <strong>Duration:</strong>
-            @duration.Minutes:@duration.Seconds.ToString("D2")
-        </p>
+                    <h5 class="text-mute">
+                        @(Model.Artist?.Name ?? "Unknown")
+                    </h5>
 
-        @if (!string.IsNullOrEmpty(Model.ApiSourceId))
-        {
-            <p><strong>API Source ID:</strong> @Model.ApiSourceId</p>
-        }
+                </div>
+            </div>
+            <h6>This will remove the track from your library and playlists.</h6>
+            <h6>Are you sure?</h6>
 
-        <p><strong>Playlists:</strong> @(Model.PlaylistTracks?.Count ?? 0)</p>
+            <form asp-action="Delete" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="TrackID" />
+                    <input type="hidden" name="artistId" value="@ViewBag.ArtistId" />
+                <button type="submit" class="btn btn-delete mt-5 me-5 ps-5 pe-5" style="border-radius: 2rem;">Delete</button>
+                    <a asp-action="Index" class="btn btn-other mt-5 me-5 ps-5 pe-5" style="border-radius: 2rem;">Cancel</a>
+            </form>
+            </div>
+        </div>
     </div>
-</div>
-
-<h3>Are you sure you want to delete this track?</h3>
-
-<form asp-action="Delete" method="post">
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="TrackID" />
-    <button type="submit" class="btn btn-danger">Delete</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-</form>
+    </div>

@@ -5,33 +5,59 @@
 }
 
 <h1>Artist Details</h1>
+<div class="container-md">
+    <div class="row">
+        <div class="col-md-4 bg-blue p-4" style="border-radius: 1rem;">
 
-<div style="display:flex; gap:15px; align-items:flex-start; margin-bottom:20px;">
-    @if (!string.IsNullOrEmpty(Model.ArtworkUrl))
-    {
-        <img src="@Model.ArtworkUrl"
-             alt="Artwork for @Model.Name"
-             style="width:150px; height:150px; object-fit:cover; border-radius:8px;" />
-    }
+            <div style="display: flex; flex-direction: column; align-items:center; padding-right: 1%;">
+                @if (!string.IsNullOrEmpty(Model.ArtworkUrl))
+                {
+                    <img src="@Model.ArtworkUrl"
+                         alt="Artwork for @Model.Name"
+                         style="width:200px; height:200px; object-fit:cover; border-radius:8px;" />
+                }
+                else
+                {
+                    <img src="~/Images/NoArtist.jpg"
+                         alt="Artwork missing for @Model.Name"
+                         style="width:200px; height:200px; object-fit:cover; border-radius:8px;" />
+                }
 
-    <div>
-        <h2>@Model.Name</h2>
+                <div class="mt-2" style="width: 100%; text-align: left;">
+                    <h2>@Model.Name</h2>
 
-        @if (!string.IsNullOrEmpty(Model.Country))
-        {
-            <p><strong>Country:</strong> @Model.Country</p>
-        }
+                    @if (!string.IsNullOrEmpty(Model.Genre))
+                    {
+                        <p class="text-mute">@Model.Genre</p>
+                    }
 
-        @if (!string.IsNullOrEmpty(Model.ApiSourceId))
-        {
-            <p><strong>API Source ID:</strong> @Model.ApiSourceId</p>
-        }
+                </div>
+                <div style="margin-top:15px; display: flex; gap:10px;">
+                    <a asp-action="Edit"
+                       asp-route-id="@Model.ArtistID"
+                       class="btn btn-other ps-4 pe-4"
+                       style="border-radius: 2rem;">
+                        Edit
+                    </a>
+                    <a asp-action="Delete"
+                       asp-route-id="@Model.ArtistID"
+                       class="btn btn-delete ps-4 pe-4"
+                       style="border-radius: 2rem;">
+                        Delete
+                    </a>
+                    <a asp-action="Index"
+                       class="btn btn-other ps-4 pe-4"
+                       style="border-radius: 2rem;">
+                        Back
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8 mt-md-0 mt-2">
+        </div>
     </div>
 </div>
-
-<hr />
-
-<h3>Tracks by this Artist</h3>
+<h3 class="text-mute">Tracks by this Artist</h3>
 
 @if (Model.Tracks == null || !Model.Tracks.Any())
 {
@@ -39,15 +65,68 @@
 }
 else
 {
-    <ul>
-        @foreach (var track in Model.Tracks.OrderBy(t => t.Title))
-        {
-            <li>@track.Title (@(track.DurationSeconds) sec)</li>
-        }
-    </ul>
+    <table class="table-mpo">
+        <thead>
+            <tr>
+                <th class="text-mute">TRACK</th>
+                <th class="text-mute">DURATION</th>
+                <th class="text-mute">ACTIONS</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var track in Model.Tracks)
+            {
+                var duration = TimeSpan.FromSeconds(track.DurationSeconds);
+                <tr class="track-row">
+                    <td style="padding-right: 1%;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+
+                            @{
+                                var artworkUrl = string.IsNullOrEmpty(track.ArtworkUrl) ? "/Images/NoArtwork.jpg" : track.ArtworkUrl;
+                                var artworkStyle = "width:50px; height:50px; object-fit:cover; border-radius:8px; margin: 2% 0;";
+                            }
+                            <img src="@artworkUrl"
+                                 alt="Artwork for @track.Title"
+                                 style="@artworkStyle" />
+
+                            <div style="display: flex; flex-direction: column; justify-content: center;">
+                                <div style="line-height: 1.2;">
+                                    <strong>@track.Title</strong>
+                                </div>
+
+                                <div class="text-mute" style="line-height: 1.2;">
+                                    @(track.Artist?.Name ?? "Unknown")
+                                </div>
+                            </div>
+
+                        </div>
+                    </td>
+                    <td class="text-mute">@duration.Minutes:@duration.Seconds.ToString("D2")</td>
+                    <td>
+                        <a asp-controller="Tracks"
+                           asp-action="Details"
+                           class="btn btn-other m-1 ms-0"
+                           asp-route-id="@track.TrackID">
+                            Details
+                        </a>
+                        <a asp-controller="Tracks"
+                           asp-action="Edit"
+                           class="btn btn-other m-1 ms-0"
+                           asp-route-id="@track.TrackID">
+                            Edit
+                        </a>
+                        <a asp-controller="Tracks"
+                           asp-action="Delete"
+                           asp-route-artistId="@Model.ArtistID"
+                           class="btn btn-delete m-1 ms-0"
+                           asp-route-id="@track.TrackID">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
-<div style="margin-top:15px;">
-    <a asp-action="Edit" asp-route-id="@Model.ArtistID" class="btn btn-primary">Edit</a>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</div>
+

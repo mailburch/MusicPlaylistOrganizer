@@ -3,69 +3,117 @@
 @{
     ViewData["Title"] = "Playlists";
     var currentSearch = ViewData["CurrentFilter"] as string;
-    var trackFilter   = (ViewData["CurrentTrackFilter"] as string) ?? "all";
+    var trackFilter = (ViewData["CurrentTrackFilter"] as string) ?? "all";
 }
+<div class="container">
+    <div class="row g-3">
+        <div class="col-4">
+        <h1>Playlists</h1>
+        <h5 class="text-mute">Your Playlists</h5>
+        <a asp-action="Create" class="btn btn-blue mb-3 ps-4 pe-4" style="max-width: 200px;">+ New Playlist</a>
+        </div>
 
-<h1>Playlists</h1>
+    <div class="col-8">
+        <p class="text-mute mb-0">Filters</p>
+        <form asp-action="Index" method="get" class="form-inline" style="margin-bottom:15px;">
+            <input type="text"
+                   name="searchString"
+                   value="@currentSearch"
+                   class="form-control formField"
+                   placeholder="Search by name or description..."
+                   style="max-width:260px; display:inline-block;" />
 
-<form asp-action="Index" method="get" class="form-inline" style="margin-bottom:15px;">
-    <input type="text"
-           name="searchString"
-           value="@currentSearch"
-           class="form-control"
-           placeholder="Search by name or description..."
-           style="max-width:260px; display:inline-block;" />
+            <select name="trackFilter" class="form-control formField ms-lg-3 ms-0 mt-lg-0 mt-2" style="max-width:200px; display:inline-block;">
+                <option value="all" selected="@(trackFilter == "all")">All Playlists</option>
+                <option value="empty" selected="@(trackFilter == "empty")">Empty Only</option>
+                <option value="nonempty" selected="@(trackFilter == "nonempty")">With Tracks Only</option>
+            </select>
 
-    <select name="trackFilter" class="form-control" style="max-width:200px; display:inline-block; margin-left:8px;">
-        <option value="all" selected="@(trackFilter == "all")">All Playlists</option>
-        <option value="empty" selected="@(trackFilter == "empty")">Empty Only</option>
-        <option value="nonempty" selected="@(trackFilter == "nonempty")">With Tracks Only</option>
-    </select>
+            <button type="submit" class="btn btn-blue ms-lg-3 ms-0">Apply</button>
+            <a asp-action="Index" class="btn btn-mute">Clear</a>
+        </form>
+        <p class="text-mute mb-0">Sort by</p>
+        <a asp-action="Index"
+           asp-route-sortOrder="@ViewData["NameSortParm"]"
+           asp-route-searchString="@currentSearch"
+           asp-route-trackFilter="@trackFilter"
+           class="btn btn-mute"
+           style="text-decoration: none;">Name</a>
+        <a asp-action="Index"
+           asp-route-sortOrder="@ViewData["CountSortParm"]"
+           asp-route-searchString="@currentSearch"
+           asp-route-trackFilter="@trackFilter"
+           class="btn btn-mute"
+           style="text-decoration:none;">
+            Track Count
+        </a>
+    </div>
+    </div>
 
-    <button type="submit" class="btn btn-outline-primary" style="margin-left:8px;">Apply</button>
-    <a asp-action="Index" class="btn btn-link">Clear</a>
-</form>
+<hr />
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New Playlist</a>
-</p>
+    <div class="row g-3">
+        @foreach (var playlist in Model)
+        {
+            var firstArtwork = playlist.PlaylistTracks?
+            .FirstOrDefault()?
+            .Track?
+            .ArtworkUrl;
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                <a asp-action="Index"
-                   asp-route-sortOrder="@ViewData["NameSortParm"]"
-                   asp-route-searchString="@currentSearch"
-                   asp-route-trackFilter="@trackFilter">
-                    Name
-                </a>
-            </th>
-            <th>Description</th>
-            <th>
-                <a asp-action="Index"
-                   asp-route-sortOrder="@ViewData["CountSortParm"]"
-                   asp-route-searchString="@currentSearch"
-                   asp-route-trackFilter="@trackFilter">
-                    Tracks
-                </a>
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var playlist in Model)
-    {
-        <tr>
-            <td>@playlist.Name</td>
-            <td>@playlist.Description</td>
-            <td>@(playlist.PlaylistTracks?.Count ?? 0)</td>
-            <td>
-                <a asp-action="Details" asp-route-id="@playlist.PlaylistID">Details</a> |
-                <a asp-action="Edit" asp-route-id="@playlist.PlaylistID">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@playlist.PlaylistID">Delete</a>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+            <div class="col-12 col-xl-6 col-xxl-4">
+                <div class="p-xl-3 p-2 bg-blue rounded-3">
+                    <div style="display:flex; gap:1rem; align-items:flex-start; margin-bottom: 1rem;">
+                        <div style="display: flex; flex-direction: column; align-items:flex-start; padding-right: 1%;">
+                            @if (!string.IsNullOrEmpty(firstArtwork))
+                            {
+                                <img src="@firstArtwork"
+                                     alt="@playlist.Name Album Art"
+                                     class="img-fluid mb-3 rounded-3"
+                                     style="width: 60px; height: 60px; object-fit:fill;" />
+                            }
+                            else
+                            {
+                                <img src="~/Images/NoArtwork.jpg"
+                                     alt="@playlist.Name Album Art Missing"
+                                     class="img-fluid mb-3 rounded-3"
+                                     style="width: 60px; height: 60px; object-fit:cover;" />
+
+                            }
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items:flex-start; padding-right: 1%;">
+                            <h5 class="mb-2">
+
+                                @playlist.Name
+
+                            </h5>
+                            <div class="mb-1 text-mute">
+                                @if (!string.IsNullOrEmpty(playlist.Description))
+                                {
+                                    <div class="mb-0 text-mute">
+                                        @playlist.Description
+                                    </div>
+                                }
+                                else
+                                {
+                                    <br />
+                                }
+                            </div>
+
+
+                            <div class="mb-3 text-mute">
+                                @(playlist.PlaylistTracks?.Count ?? 0) Tracks
+
+                            </div>
+                            <div>
+                                <a asp-action="Details" class="btn btn-other ps-3 pe-3 m-1" asp-route-id="@playlist.PlaylistID">Details</a>
+                                <a asp-action="EditPlaylist" class="btn btn-other ps-3 pe-3 m-1" asp-route-id="@playlist.PlaylistID">Edit</a>
+                                <a asp-action="Delete" class="btn btn-delete ps-3 pe-3 m-1" asp-route-id="@playlist.PlaylistID">Delete</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,31 +1,201 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    color: #d0d1d9;
 }
 
+thead {
+    background-color: #050712;
+    margin-bottom: 0;
+}
+
+th {
+    padding: 0.5rem 0.5rem;
+    background-color: #050712;
+    box-shadow: inset 0 0 0 9999px var(--bs-table-bg);
+}
+
+
+.text-mute {
+    color: #666a8e;
+}
+
+.text-link-mute {
+    color: #666a8e;
+}
+
+    .text-link-mute:hover {
+        color: #d0d1d9;
+    }
+
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+    color: var(--bs-secondary-color);
+    text-align: end;
 }
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+    text-align: start;
+}
+
+.bg-drk-blue {
+    background-color: #050712;
+}
+
+.bg-blue {
+    background-color: #15182b;
+}
+
+.btn-blue {
+    color: #d0d1d9;
+    background-color: #2a2df8;
+    border-radius: 20px;
+    padding: .5% 3%;
+    border-color: #2a2df8;
+    border-width: 3px;
+}
+
+    .btn-blue:hover {
+        color: #d0d1d9;
+        background-color: darkblue;
+        border-color: #2a2df8;
+        border-width: 3px;
+    }
+
+.btn-mute {
+    color: #d0d1d9;
+    border-radius: 20px;
+    padding: .5% 3%;
+    border-color: #666a8e;
+    border-width: 3px;
+}
+
+    .btn-mute:hover {
+        color: #d0d1d9;
+        background-color: #666a8e;
+        border-color: #666a8e;
+        border-width: 3px;
+    }
+
+.btn-delete {
+    background-color: #3a1b2b;
+    color: #d0425e;
+    padding: 2% 5%;
+}
+
+    .btn-delete:hover {
+        background-color: #d0425e;
+        color: #3a1b2b;
+    }
+
+.btn-other {
+    color: #d0d1d9;
+    background-color: #23274a;
+    padding: .5rem 1rem;
+}
+
+    .btn-other:hover {
+        color: #d0d1d9;
+        border-color: #23274a;
+        background-color: #2a2df8;
+    }
+
+.table-mpo {
+    background-color: #050712;
+    width: 100%;
+    margin-bottom: 0;
+    color: #d0d1d9;
+    vertical-align: top;
+    caption-side: bottom;
+    border-collapse: separate;
+    border-spacing: 0 .6rem;
+    border: none;
+}
+
+/* Update the track-row and its TD children */
+.track-row {
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    padding: 0;
+}
+
+    /* Apply background to ALL cells within the row */
+    .track-row td {
+        background-color: #15182b;
+        padding: 2px 15px;
+    }
+
+        /* Apply rounded corners to the corners of the row */
+        .track-row td:first-child {
+            border-top-left-radius: 1rem;
+            border-bottom-left-radius: 1rem;
+        }
+
+        .track-row td:last-child {
+            border-top-right-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+        }
+
+/* Style the form field */
+.form-control.formField {
+    background-color: #23274a !important;
+    color: #d0d1d9 !important;
+}
+
+    .form-control.formField:focus {
+        background-color: #23274a !important;
+        color: #d0d1d9 !important;
+    }
+
+    .form-control.formField:not(:placeholder-shown) {
+        background-color: #23274a !important;
+        color: #d0d1d9 !important;
+    }
+
+
+/* For Chrome, Edge, Safari, Opera */
+.formField::-webkit-input-placeholder {
+    color: #666a8e;
+}
+
+/* For Firefox 19+ */
+.formField:-moz-placeholder {
+    color: #666a8e;
+    opacity: 1;
+}
+
+/* For Internet Explorer 10-11 */
+.formField:-ms-input-placeholder {
+    color: #666a8e;
+}
+/* Prevent Chrome autofill from turning background white */
+input.formField:-webkit-autofill,
+input.formField:-webkit-autofill:hover,
+input.formField:-webkit-autofill:focus,
+textarea.formField:-webkit-autofill,
+textarea.formField:-webkit-autofill:hover,
+textarea.formField:-webkit-autofill:focus,
+select.formField:-webkit-autofill,
+select.formField:-webkit-autofill:hover,
+select.formField:-webkit-autofill:focus {
+    background-color: #23274a !important;
+    -webkit-box-shadow: 0 0 0 1000px #23274a inset !important;
+    -webkit-text-fill-color: #d0d1d9 !important;
 }

@@ -142,6 +142,44 @@ namespace MusicPlaylistOrganizer.Controllers
 
             await _playlistRepo.UpdateAsync(playlist);
             return RedirectToAction(nameof(Edit), new { id = playlist.PlaylistID });
+       }
+        // GET: /Playlists/EditPlaylist/5
+        public async Task<IActionResult> EditPlaylist(int id)
+        {
+            var playlist = await _playlistRepo.GetWithTracksAsync(id);
+            if (playlist == null)
+            {
+                return NotFound();
+            }
+
+            // All tracks (to add existing songs into playlist)
+            var allTracks = await _trackRepo.GetAllAsync();
+            ViewBag.AllTracks = allTracks;
+
+            return View(playlist);
+        }
+
+        // POST: /Playlists/EditPlaylist/5 (update playlist name/description)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPlaylist(int id, [Bind("PlaylistID,Name,Description")] Playlist playlist)
+        {
+            if (id != playlist.PlaylistID)
+                return BadRequest();
+
+            // If validation fails, return the view to show errors
+            if (!ModelState.IsValid)
+            {
+                // You may need to reload ViewBag.AllTracks here if you use it for error display
+                var allTracks = await _trackRepo.GetAllAsync();
+                ViewBag.AllTracks = allTracks;
+                return View(playlist);
+            }
+
+            await _playlistRepo.UpdateAsync(playlist);
+
+            // ⭐ CORRECTED LINE: Redirect to the Index action after successfully saving info
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
