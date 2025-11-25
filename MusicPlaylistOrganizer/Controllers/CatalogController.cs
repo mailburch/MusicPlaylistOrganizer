@@ -27,7 +27,7 @@ namespace MusicPlaylistOrganizer.Controllers
         }
 
         // -------------------------------
-        // SEARCH TRACKS (for Playlists)
+        // SEARCH TRACKS (for Playlists / Tracks)
         // -------------------------------
         [HttpGet]
         public async Task<IActionResult> SearchTracks(string query)
@@ -37,7 +37,7 @@ namespace MusicPlaylistOrganizer.Controllers
 
             var results = await _catalog.SearchTracksAsync(query);
 
-            // Shape the JSON to EXACTLY what your JS expects
+            // Shape the JSON to exactly what your JS expects
             var shaped = results.Select(t => new
             {
                 trackId = t.TrackId,
@@ -73,6 +73,9 @@ namespace MusicPlaylistOrganizer.Controllers
             return Json(shaped);
         }
 
+        // -------------------------------------
+        // IMPORT TRACK + ARTIST (+ optional PLAYLIST)
+        // -------------------------------------
         [HttpPost]
         public async Task<IActionResult> ImportTrack([FromBody] ImportTrackFromApiViewModel model)
         {
@@ -101,7 +104,7 @@ namespace MusicPlaylistOrganizer.Controllers
                     var artist = await _artistRepo.GetOrCreateByNameAsync(
                         name,
                         artworkUrl: model.ArtworkUrl,
-                        country: null
+                        genre: null   // iTunes track search doesn't give us a reliable artist-genre here
                     );
 
                     artistsForThisTrack.Add(artist);
@@ -112,24 +115,41 @@ namespace MusicPlaylistOrganizer.Controllers
                                 ?? await _artistRepo.GetOrCreateFromApiAsync(
                                        apiSourceId: model.ArtistApiId,
                                        name: artistNameRaw,
-                                       country: null
+                                       genre: null,
+                                       artworkUrl: model.ArtworkUrl
                                    );
             }
             else
             {
                 // 🔹 SINGLE ARTIST: "You"
-                // First try to reuse by name so "You" goes to existing row if present
-                var existingByName = !string.IsNullOrWhiteSpace(artistNameRaw)
-                    ? await _artistRepo.GetByNameAsync(artistNameRaw)
-                    : null;
+                Artist? existingByName = null;
+
+                if (!string.IsNullOrWhiteSpace(artistNameRaw))
+                {
+                    existingByName = await _artistRepo.GetByNameAsync(artistNameRaw);
+                }
 
                 if (existingByName != null)
                 {
-                    // If this existing artist doesn't have an ApiSourceId and we know one, attach it
+                    // Fill in missing fields (ApiSourceId / ArtworkUrl) if we now have them
+                    bool changed = false;
+
                     if (!string.IsNullOrWhiteSpace(model.ArtistApiId) &&
                         string.IsNullOrEmpty(existingByName.ApiSourceId))
                     {
                         existingByName.ApiSourceId = model.ArtistApiId;
+                        changed = true;
+                    }
+
+                    if (!string.IsNullOrEmpty(model.ArtworkUrl) &&
+                        string.IsNullOrEmpty(existingByName.ArtworkUrl))
+                    {
+                        existingByName.ArtworkUrl = model.ArtworkUrl;
+                        changed = true;
+                    }
+
+                    if (changed)
+                    {
                         await _artistRepo.UpdateAsync(existingByName);
                     }
 
@@ -137,11 +157,12 @@ namespace MusicPlaylistOrganizer.Controllers
                 }
                 else
                 {
-                    // Fall back to API-based creation
+                    // Fall back to API-based creation (smart: checks ApiSourceId + name, sets Genre + Artwork)
                     primaryArtist = await _artistRepo.GetOrCreateFromApiAsync(
                         apiSourceId: model.ArtistApiId,
                         name: artistNameRaw,
-                        country: null
+                        genre: null,
+                        artworkUrl: model.ArtworkUrl
                     );
                 }
             }
