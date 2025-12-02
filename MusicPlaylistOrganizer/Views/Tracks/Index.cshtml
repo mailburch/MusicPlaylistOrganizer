@@ -92,12 +92,12 @@
                     {
                         var duration = TimeSpan.FromSeconds(track.DurationSeconds);
                         <tr class="track-row">
-                            <td style="padding-right: 1%;">
+                            <td style="padding-right: .2rem;">
                                 <div style="display: flex; align-items: center; gap: 10px;">
 
                                     @{
                                         var artworkUrl = string.IsNullOrEmpty(track.ArtworkUrl) ? "/Images/NoArtwork.jpg" : track.ArtworkUrl;
-                                        var artworkStyle = "width:50px; height:50px; object-fit:cover; border-radius:8px; margin: 2% 0;";
+                                        var artworkStyle = "width:50px; height:50px; object-fit:cover; border-radius:8px; margin: .4rem 0;";
                                     }
                                     <img src="@artworkUrl"
                                          alt="Artwork for @track.Title"
