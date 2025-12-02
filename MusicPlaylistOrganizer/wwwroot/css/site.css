@@ -97,7 +97,7 @@ th {
 .btn-delete {
     background-color: #3a1b2b;
     color: #d0425e;
-    padding: 2% 5%;
+    padding: .5rem 1rem;
 }
 
     .btn-delete:hover {
